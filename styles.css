@@ -386,10 +386,6 @@ body::after {
 
 .nav-menu a:hover {
     color: var(--primary-color);
-    background: rgba(54, 188, 247, 0.12);
-    box-shadow: 0 8px 24px rgba(54, 188, 247, 0.25);
-    border-color: rgba(54, 188, 247, 0.35);
-    text-shadow: 0 0 10px rgba(54, 188, 247, 0.6);
 }
 
 .nav-menu a::after {
@@ -575,6 +571,41 @@ body::after {
     line-height: 1.1;
     margin-bottom: 1.5rem;
 }
+
+/* Tiny language superscript for greeting */
+.lang-sup {
+    position: relative;
+    top: -0.6em;
+    margin-left: 6px;
+    font-size: 0.45em;
+    letter-spacing: 0.5px;
+    padding: 2px 4px;
+    border-radius: 6px;
+    color: #a8dfff;
+    border: 1px solid rgba(54,188,247,0.5);
+    background: rgba(54,188,247,0.12);
+    vertical-align: baseline;
+}
+
+/* Always-visible language badge */
+.lang-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 0.65em;
+    line-height: 1;
+    padding: 2px 6px;
+    border-radius: 999px;
+    border: 1px solid rgba(54,188,247,0.45);
+    background: rgba(54,188,247,0.12);
+    color: #bfe8ff;
+    vertical-align: middle;
+}
+
+/* Inline superscript language note */
+.lang-note-wrap { top: -0.6em; position: relative; margin-left: 5px; font-size: 0.30em; color: #a8dfff; }
+.lang-note { text-decoration: none; border-bottom: 1px dotted rgba(168,223,255,0.6); cursor: help; letter-spacing: 0.2px; }
 
 /* Typing effect under name */
 .typing-wrap { display: inline-flex; align-items: center; gap: 8px; min-height: 34px; margin-top: 0.25rem; }
@@ -1433,7 +1464,7 @@ body::after {
 /* Projects: hide stars and language, emphasize description */
 .project-lang { display: none; }
 .project-stats { display: none; }
-.project-card p { margin-top: 0.25rem; font-size: 1.08rem; line-height: 1.6; color: #d3d9e3; }
+.project-card p { margin-top: 0.25rem; font-size: 1.08rem; line-height: 1.6; color: #d3d9e3; text-align: justify; }
 
 /* Contact squares */
 .contact-grid { grid-auto-rows: 1fr; }
@@ -1996,8 +2027,8 @@ body::after {
 .skills-right { }
 
 /* Logo grayscale default, color on hover */
-.skill-item img { filter: grayscale(100%) contrast(0.9) opacity(0.9); }
-.skill-item:hover img { filter: grayscale(0%); }
+.skill-item img { filter: none; opacity: 1; }
+.skill-item:hover img { filter: saturate(1.1) brightness(1.05); }
 
 @media (max-width: 992px) {
 	.skills-layout { grid-template-columns: 1fr; }

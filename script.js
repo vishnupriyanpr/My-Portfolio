@@ -282,13 +282,21 @@ async function renderPinnedProjects() {
     if (!grid) return;
 
     const fallback = [
-        { repo: 'Terminal-pal 💻🤖', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/terminal-pal', description: 'AI Terminal Pal: multi-AI terminal assistant with smart project analysis (Online + Offline LLMs powered).'},
-        { repo: 'Oxocare ➕💻', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/oxocare', description: 'MedDoc Scanner: OCR + secure storage with intuitive dashboard, and Global Medical DataBase (Android App - Kotlin).'},
-        { repo: 'Verve 🍚🤖', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/verve', description: 'AI-powered nutritional advisor for chronic disease management (Android App - Flutter).'},
-        { repo: 'UltraCodeAI 💻🤖', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/ultracodeai', description: 'AI-powered IntelliJ plugin: context-aware prompts and refactors (Online + Offline LLMs powered).'},
-        { repo: 'PrediChurn 🧠🤖', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/PrediChurn', description: 'End-to-end churn prediction ML pipeline with feature engineering and tuning (Churn - Prediction).'},
-        { repo: 'PharmaScan 🧑‍⚕️🤖', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/PharmaScan', description: 'Medicine strip scanner powered by AI for quick identification (Android App - Kotlin).' },
+        { repo: 'Terminal-pal ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/terminal-pal', description: 'AI Terminal Pal: multi-AI terminal assistant with smart project analysis (Online + Offline LLMs powered).'},
+        { repo: 'Oxocare ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/oxocare', description: 'MedDoc Scanner: OCR + secure storage with intuitive dashboard, and Global Medical DataBase (Android App - Kotlin).'},
+        { repo: 'Verve ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/verve', description: 'AI-powered nutritional advisor for chronic disease management (Android App - Flutter).'},
+        { repo: 'UltraCodeAI ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/ultracodeai', description: 'AI-powered IntelliJ plugin: context-aware prompts and refactors (Online + Offline LLMs powered).'},
+        { repo: 'PrediChurn ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/PrediChurn', description: 'End-to-end churn prediction ML pipeline with feature engineering and tuning (Churn - Prediction).'},
+        { repo: 'PharmaScan ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/PharmaScan', description: 'Medicine strip scanner powered by AI for quick identification (Android App - Kotlin).' },
     ];
+
+    // Render fallback immediately so Projects never appears empty
+    grid.innerHTML = fallback.map(r => projectCardHTML(r)).join('');
+    // Bind click for the immediately rendered cards
+    grid.querySelectorAll('.project-card').forEach(card => {
+        const url = card.getAttribute('data-github');
+        if (url) card.addEventListener('click', () => window.open(url, '_blank'));
+    });
 
     let repos = [];
     try {
@@ -308,21 +316,13 @@ async function renderPinnedProjects() {
         // ignore and use fallback
     }
 
-    if (!repos.length) repos = fallback;
+    if (!repos.length) return; // keep fallback content
 
+    // Replace with live data
     grid.innerHTML = repos.map(r => projectCardHTML(r)).join('');
-
-    // Bind click for button and card
     grid.querySelectorAll('.project-card').forEach(card => {
         const url = card.getAttribute('data-github');
-        card.addEventListener('click', () => window.open(url, '_blank'));
-        const btn = card.querySelector('.view-btn');
-        if (btn) {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                window.open(url, '_blank');
-            });
-        }
+        if (url) card.addEventListener('click', () => window.open(url, '_blank'));
     });
 }
 
@@ -432,37 +432,91 @@ window.addEventListener('load', () => {
     // Safely render gallery (no impact if section absent)
     try { renderGallery(); } catch (_) {}
 
-    // Wire quick message popover
-    const btn = document.getElementById('messageBtn');
-    const pop = document.getElementById('messagePopover');
-    if (btn && pop) {
-        let open = false;
-        const toggle = () => {
-            open = !open;
-            pop.hidden = !open;
-        };
-        btn.addEventListener('click', (e) => { e.preventDefault(); toggle(); });
-        document.addEventListener('click', (e) => {
-            if (!open) return;
-            if (e.target === btn || pop.contains(e.target)) return;
-            pop.hidden = true; open = false;
-        });
-
-        const send = document.getElementById('sendMsg');
-        if (send) {
-            send.addEventListener('click', () => {
-                const name = (document.getElementById('msgName')||{}).value || '';
-                const email = (document.getElementById('msgEmail')||{}).value || '';
-                const body = (document.getElementById('msgBody')||{}).value || '';
-                if (!name || !email || !body) { showNotification('Please fill all fields.', 'error'); return; }
-                const subject = encodeURIComponent(`Message from ${name}`);
-                const msg = encodeURIComponent(`${body}\n\nFrom: ${name} <${email}>`);
-                const to = 'priyanv783@gmail.com';
-                window.location.href = `mailto:${to}?subject=${subject}&body=${msg}`;
-                // auto-collapse after send attempt
-                pop.hidden = true; open = false;
+    // After gallery loads, equalize the last visual row so bottoms align
+    setTimeout(() => {
+        try {
+            const grid = document.getElementById('galleryGrid');
+            if (!grid) return;
+            const cards = Array.from(grid.querySelectorAll('.gallery-card'));
+            if (!cards.length) return;
+            // determine cards in the last visual row by comparing top offsets
+            const tops = cards.map(c => c.getBoundingClientRect().top);
+            const maxTop = Math.max(...tops);
+            const lastRow = cards.filter((c, i) => tops[i] >= maxTop - 2);
+            const target = Math.min(...lastRow.map(c => c.querySelector('.gallery-image img')?.height || 0));
+            lastRow.forEach(c => {
+                const img = c.querySelector('.gallery-image img');
+                const wrap = c.querySelector('.gallery-image');
+                if (img && wrap && target > 0) {
+                    wrap.style.maxHeight = target + 'px';
+                    img.style.height = target + 'px';
+                    img.style.objectFit = 'cover';
+                }
             });
-        }
+        } catch (_) {}
+    }, 50);
+
+    // Handle contact form submission
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const message = document.getElementById('message').value.trim();
+            
+            if (!firstName || !lastName || !email || !message) {
+                showNotification('Please fill all required fields.', 'error');
+                return;
+            }
+            
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showNotification('Please enter a valid email address.', 'error');
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = contactForm.querySelector('.submit-btn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span>Sending...</span><i class="fas fa-spinner fa-spin"></i>';
+            submitBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        firstName,
+                        lastName,
+                        email,
+                        message
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
+                    contactForm.reset();
+                } else {
+                    throw new Error(data.error || 'Failed to send message');
+                }
+                
+            } catch (error) {
+                console.error('Error sending email:', error);
+                showNotification(error.message || 'Failed to send message. Please try again.', 'error');
+            } finally {
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
     }
 });
 

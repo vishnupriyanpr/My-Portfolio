@@ -21,8 +21,8 @@ document.addEventListener('DOMContentLoaded', function() {
             particlesContainer.appendChild(particle);
         }
     }
-    // Smooth scrolling for navigation
-    const navLinks = document.querySelectorAll('a[href^="#"]');
+    // Smooth scrolling for navigation (only navbar/footer anchors)
+    const navLinks = document.querySelectorAll('.nav-menu a[href^="#"], .footer-links a[href^="#"]');
     
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
@@ -60,6 +60,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 item.classList.add('active');
             }
         });
+    });
+
+    // Wire certification credential URLs
+    const certificationUrls = {
+        cert1: 'https://www.udemy.com/certificate/UC-c78f2ef5-7cfb-4f63-9078-9c42b25dc2e7',
+        cert2: 'https://www.udemy.com/certificate/UC-e2fda013-13a5-4dd0-bba6-2b46f4261508/',
+        cert3: 'https://www.sololearn.com/certificates/CC-WVFVQYXD',
+        cert4: 'https://www.coursera.org/account/accomplishments/verify/QVOUHN8W8YYF'
+    };
+    Object.entries(certificationUrls).forEach(([id, url]) => {
+        const el = document.getElementById(id);
+        if (el && url && url !== '#') {
+            el.setAttribute('href', url);
+            el.setAttribute('target', '_blank');
+            el.setAttribute('rel', 'noopener noreferrer');
+            // Remove any previously bound listeners (e.g., smooth-scroll) by cloning
+            const clone = el.cloneNode(true);
+            el.parentNode.replaceChild(clone, el);
+        }
     });
 
     // Floating rocket click functionality

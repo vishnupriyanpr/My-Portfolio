@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.removeChild(tempInput);
         
         // Show success message
-        showNotification('Command copied to clipboard! 🚀', 'success');
+        showNotification('Command copied to clipboard!', 'success');
         
         // Add click animation
         this.style.transform = 'scale(1.3) rotate(25deg)';
@@ -111,6 +111,18 @@ document.addEventListener('DOMContentLoaded', function() {
         copyBtn.addEventListener('click', function() {
             const command = this.parentElement.querySelector('code').textContent;
             copyToClipboard(command);
+        });
+    }
+
+    // CLI copy button in Connect section
+    const cliCopy = document.querySelector('.cli-copy');
+    if (cliCopy) {
+        cliCopy.addEventListener('click', () => {
+            const input = document.querySelector('.cli-input');
+            if (input) {
+                copyToClipboard(input.value);
+                showNotification('Command copied to clipboard!', 'success');
+            }
         });
     }
 
@@ -288,6 +300,8 @@ async function renderPinnedProjects() {
         { repo: 'UltraCodeAI ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/ultracodeai', description: 'AI-powered IntelliJ plugin: context-aware prompts and refactors (Online + Offline LLMs powered).'},
         { repo: 'PrediChurn ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/PrediChurn', description: 'End-to-end churn prediction ML pipeline with feature engineering and tuning (Churn - Prediction).'},
         { repo: 'PharmaScan ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/PharmaScan', description: 'Medicine strip scanner powered by AI for quick identification (Android App - Kotlin).' },
+        { repo: 'Vishnu-cli-npx ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/Vishnu-cli-npx', description: 'Personal, zero-install CLI card — run npx vishnupriyan to view profile, socials, and projects in your terminal.' },
+        { repo: 'Cardiac-Care ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/Cardiac-Care', description: 'AI-powered heart health suite: ECG analysis, chatbot, diet planner, report summarizer, patient records, and ambulance booking.' },
     ];
 
     // Render fallback immediately so Projects never appears empty
@@ -311,6 +325,21 @@ async function renderPinnedProjects() {
                 language: d.language || '',
                 stars: d.stars || 0,
             }));
+            // Merge with fallback to ensure at least six projects remain visible
+            const requested = [
+                { repo: 'Vishnu-cli-npx ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/Vishnu-cli-npx', description: 'Personal, zero-install CLI card — run npx vishnupriyan to view profile, socials, and projects in your terminal.' },
+                { repo: 'Cardiac-Care ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/Cardiac-Care', description: 'AI-powered heart health suite: ECG analysis, chatbot, diet planner, report summarizer, patient records, and ambulance booking.' }
+            ];
+            const seen = new Set(repos.map(r => r.link));
+            // Backfill from fallback until we have 6
+            fallback.forEach(f => {
+                if (repos.length < 6 && !seen.has(f.link)) {
+                    repos.push(f);
+                    seen.add(f.link);
+                }
+            });
+            // Append the two requested projects as an extra row
+            requested.forEach(p => { if (!seen.has(p.link)) repos.push(p); });
         }
     } catch (e) {
         // ignore and use fallback
@@ -318,7 +347,7 @@ async function renderPinnedProjects() {
 
     if (!repos.length) return; // keep fallback content
 
-    // Replace with live data
+    // Replace with merged live+fallback data
     grid.innerHTML = repos.map(r => projectCardHTML(r)).join('');
     grid.querySelectorAll('.project-card').forEach(card => {
         const url = card.getAttribute('data-github');
@@ -341,7 +370,7 @@ function projectCardHTML(r) {
 function copyToClipboard(text) {
     if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(text).then(() => {
-            showNotification('Copied to clipboard! 📋', 'success');
+            showNotification('Copied to clipboard! ', 'success');
         }).catch(() => {
             fallbackCopyToClipboard(text);
         });
@@ -386,7 +415,7 @@ function showNotification(message, type = 'info') {
     `;
     
     notification.style.cssText = `
-        position: fixed; top: 20px; right: 20px; background: ${type === 'success' ? '#36BCF7' : '#ff6b6b'}; color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); z-index: 10000; transform: translateX(400px); transition: transform 0.3s ease; max-width: 300px;`;
+        position: fixed; top: 20px; right: 20px; background: ${type === 'success' ? '#36BCF7' : '#ff6b6b'}; color: ${type === 'success' ? 'black' : 'white'}; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); z-index: 10000; transform: translateX(400px); transition: transform 0.3s ease; max-width: 300px;`;
     
     document.body.appendChild(notification);
     setTimeout(() => { notification.style.transform = 'translateX(0)'; }, 100);
@@ -486,31 +515,27 @@ window.addEventListener('load', () => {
             submitBtn.disabled = true;
             
             try {
-                const response = await fetch('/api/send-email', {
+                const formData = new FormData();
+                formData.append('name', `${firstName} ${lastName}`);
+                formData.append('email', email);
+                formData.append('message', message);
+                formData.append('_gotcha', ''); // Honeypot to prevent spam
+                
+                const response = await fetch('https://getform.io/f/bxozyeza', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        firstName,
-                        lastName,
-                        email,
-                        message
-                    })
+                    body: formData
                 });
                 
-                const data = await response.json();
-                
-                if (response.ok && data.success) {
+                if (response.ok) {
                     showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
                     contactForm.reset();
                 } else {
-                    throw new Error(data.error || 'Failed to send message');
+                    throw new Error('Failed to send message');
                 }
                 
             } catch (error) {
                 console.error('Error sending email:', error);
-                showNotification(error.message || 'Failed to send message. Please try again.', 'error');
+                showNotification('Failed to send message. Please try again.', 'error');
             } finally {
                 // Reset button state
                 submitBtn.innerHTML = originalText;

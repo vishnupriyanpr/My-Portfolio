@@ -333,9 +333,9 @@ body::after {
     background: rgba(10, 10, 10, 0.22);
     border-color: rgba(54, 188, 247, 0.35);
     box-shadow: 
-        0 14px 48px rgba(54, 188, 247, 0.25),
-        0 0 0 2px rgba(54, 188, 247, 0.25) inset,
-        0 8px 32px rgba(0, 0, 0, 0.45);
+        0 18px 60px rgba(54, 188, 247, 0.35),
+        0 0 0 3px rgba(54, 188, 247, 0.3) inset,
+        0 12px 40px rgba(0, 0, 0, 0.5);
 }
 
 .navbar:hover::before { opacity: 1; }
@@ -383,7 +383,7 @@ body::after {
     line-height: 1;
     border: 1px solid transparent; /* prevent layout shift on hover */
     text-transform: uppercase;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
 }
 
 .nav-menu a:hover {
@@ -661,7 +661,7 @@ body::after {
 
 .cta-button.primary {
     background: var(--gradient-primary);
-    color: white;
+    color: black;
     box-shadow: var(--shadow-primary);
 }
 
@@ -999,6 +999,7 @@ body::after {
     margin-bottom: 1.5rem;
     line-height: 1.6;
     transition: all 0.3s ease;
+    text-align: justify;
 }
 
 .project-card:hover p {
@@ -1282,7 +1283,15 @@ body::after {
     }
     
     .nav-menu {
-        display: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+    }
+    
+    .nav-menu a {
+        font-size: 1rem;
+        padding: 0.3rem 0.6rem;
     }
     
     .hero-cta {
@@ -1292,7 +1301,11 @@ body::after {
     .about-stats {
         grid-template-columns: 1fr;
     }
-    .navbar { width: 94%; padding: 1rem 1.25rem; }
+    .navbar { 
+        width: 96%; 
+        padding: 1rem 1rem; 
+        top: 10px;
+    }
     .hero-title { font-size: 2.2rem; }
     .profile-img { width: clamp(140px, 38vw, 220px); }
     .projects-grid { grid-template-columns: 1fr; gap: 1rem; }
@@ -1323,6 +1336,34 @@ body::after {
     .section-title {
         font-size: 1.8rem;
     }
+    
+    .navbar {
+        width: 98%;
+        padding: 0.8rem 0.8rem;
+        top: 5px;
+    }
+    
+    .nav-menu {
+        gap: 0.5rem;
+    }
+    
+    .nav-menu a {
+        font-size: 0.9rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .about-content {
+        gap: 1.5rem;
+    }
+    
+    .profile-info .name {
+        font-size: 2rem;
+    }
+    
+    .profile-info .title {
+        font-size: 1.2rem;
+    }
+    
     .npx-command { flex-direction: column; gap: 0.5rem; align-items: flex-start; }
     .message-popover-inner { min-width: 230px; }
 }
@@ -2058,7 +2099,6 @@ body::after {
 /* Skills two-column layout */
 .skills-layout { display: grid; grid-template-columns: 1fr 1.5fr; gap: 3rem; align-items: start; }
 .skills-left { padding-top: 1rem; }
-.skills-right { }
 
 /* Logo grayscale default, color on hover */
 .skill-item img { filter: grayscale(100%) contrast(0.9) opacity(0.9); }
@@ -2216,21 +2256,22 @@ body::after {
     display: flex;
     gap: 1rem;
     margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
 .social-links-connect a {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 48px;
-    height: 48px;
+    width: 60px;
+    height: 60px;
     background: rgba(54, 188, 247, 0.1);
     border: 1px solid rgba(54, 188, 247, 0.3);
     border-radius: 12px;
     color: var(--primary-color);
     text-decoration: none;
     transition: all 0.3s ease;
-    font-size: 1.2rem;
+    font-size: 1.35rem;
 }
 
 .social-links-connect a:hover {
@@ -2295,7 +2336,7 @@ body::after {
     background: var(--gradient-primary);
     border: none;
     border-radius: 12px;
-    color: white;
+    color: black;
     font-size: 1.1rem;
     font-weight: 600;
     font-family: 'Poppins', sans-serif;
@@ -2325,6 +2366,22 @@ body::after {
 .submit-btn:hover i {
     transform: translateX(3px);
 }
+
+/* CLI contact method */
+.cli-row { margin-top: 1.5rem; }
+.cli-command {
+    display: flex; gap: 0.5rem; align-items: stretch; max-width: 380px;
+    background: rgba(16,18,24,0.7);
+    border: 1px solid rgba(54,188,247,0.35);
+    border-radius: 12px; padding: 0.4rem; box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+}
+.cli-input {
+    flex: 1; background: transparent; border: none; color: #E6F3FF; padding: 0.6rem 0.8rem; border-radius: 8px;
+    font-family: 'Courier New', monospace; font-size: 0.95rem;
+}
+.cli-input:focus { outline: none; }
+.cli-copy { display: inline-flex; align-items: center; gap: 0.4rem; background: var(--primary-color); color: #0a0a0a; border: none; border-radius: 10px; padding: 0 0.9rem; cursor: pointer; font-weight: 600; }
+.cli-copy:hover { filter: brightness(1.1); }
 
 @media (max-width: 768px) {
     .connect-layout {

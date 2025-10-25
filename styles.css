@@ -1044,6 +1044,172 @@ body::after {
     pointer-events: none;
 }
 
+/* Language badges for Terminal-pal project */
+.project-lang-badge {
+    position: absolute;
+    top: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(54, 188, 247, 0.1);
+    border: 2px solid rgba(54, 188, 247, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(8px);
+    z-index: 10;
+}
+
+/* Position Python badge on the right */
+.python-badge {
+    right: 12px;
+}
+
+/* Position Java badge on the right */
+.java-badge {
+    right: 12px;
+}
+
+/* Position Kotlin badge on the right */
+.kotlin-badge {
+    right: 12px;
+}
+
+/* Position Flutter badge on the right */
+.flutter-badge {
+    right: 12px;
+}
+
+/* Position Dart badge to the left of Flutter badge */
+.dart-badge {
+    right: 50px;
+}
+
+/* Position SQL badge to the left of Kotlin badge */
+.sql-badge {
+    right: 50px;
+}
+
+/* Position PyTorch badge to the left of Python badge */
+.pytorch-badge {
+    right: 50px;
+}
+
+/* Position Node.js badge on the right */
+.nodejs-badge {
+    right: 12px;
+}
+
+/* Position npm badge to the left of Node.js badge */
+.npm-badge {
+    right: 50px;
+}
+
+/* Position AI badge to the left of language badges */
+.ai-badge {
+    right: 50px;
+}
+
+/* Position OCR badge to the left of language badges */
+.ocr-badge {
+    right: 50px;
+}
+
+/* Special positioning for projects with 3 badges */
+.three-badges-project .flutter-badge,
+.three-badges-project .python-badge,
+.three-badges-project .kotlin-badge {
+    right: 12px;
+}
+
+.three-badges-project .dart-badge,
+.three-badges-project .pytorch-badge,
+.three-badges-project .sql-badge {
+    right: 50px;
+}
+
+.three-badges-project .ai-badge,
+.three-badges-project .ocr-badge {
+    right: 88px;
+}
+
+.project-card:hover .project-lang-badge {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Make logos always visible by default */
+.project-lang-badge {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.python-badge img,
+.java-badge img,
+.kotlin-badge img,
+.flutter-badge img,
+.dart-badge img,
+.sql-badge img,
+.pytorch-badge img,
+.nodejs-badge img,
+.npm-badge img {
+    width: 18px;
+    height: 18px;
+    filter: grayscale(100%) brightness(0.7);
+    transition: all 0.3s ease;
+}
+
+.ai-badge i,
+.ocr-badge i {
+    font-size: 16px;
+    color: #36BCF7;
+    transition: all 0.3s ease;
+}
+
+.project-card:hover .python-badge,
+.project-card:hover .java-badge,
+.project-card:hover .kotlin-badge,
+.project-card:hover .flutter-badge,
+.project-card:hover .dart-badge,
+.project-card:hover .sql-badge,
+.project-card:hover .pytorch-badge,
+.project-card:hover .nodejs-badge,
+.project-card:hover .npm-badge {
+    background: rgba(54, 188, 247, 0.2);
+    border-color: rgba(54, 188, 247, 0.6);
+    box-shadow: 0 4px 12px rgba(54, 188, 247, 0.3);
+}
+
+.project-card:hover .ai-badge,
+.project-card:hover .ocr-badge {
+    background: rgba(54, 188, 247, 0.2);
+    border-color: rgba(54, 188, 247, 0.6);
+    box-shadow: 0 4px 12px rgba(54, 188, 247, 0.3);
+}
+
+.project-card:hover .python-badge img,
+.project-card:hover .java-badge img,
+.project-card:hover .kotlin-badge img,
+.project-card:hover .flutter-badge img,
+.project-card:hover .dart-badge img,
+.project-card:hover .sql-badge img,
+.project-card:hover .pytorch-badge img,
+.project-card:hover .nodejs-badge img,
+.project-card:hover .npm-badge img {
+    transform: scale(1.1);
+    filter: grayscale(0%) brightness(1.2);
+}
+
+.project-card:hover .ai-badge i,
+.project-card:hover .ocr-badge i {
+    transform: scale(1.1);
+    color: #5CC8FF;
+    text-shadow: 0 0 8px rgba(54, 188, 247, 0.6);
+}
+
 .project-card:hover .project-badge {
     opacity: 1;
     transform: translateY(0);
@@ -1844,10 +2010,13 @@ body::after {
     background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    border: 2px solid rgba(54, 188, 247, 0.2);
-    border-radius: 20px;
+    border: 1px solid rgba(54, 188, 247, 0.2);
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(54, 188, 247, 0.1);
+    box-shadow: 0 6px 20px rgba(54, 188, 247, 0.1);
+    transform: none;
+    max-width: 98%;
+    margin: 0 auto;
 }
 
 /* Gallery Section */
@@ -1909,9 +2078,9 @@ body::after {
 
 .cert-header {
     display: grid;
-    grid-template-columns: 1fr 2fr 1.5fr 1fr;
+    grid-template-columns: 1.5fr 3.5fr 1.8fr 1.2fr;
     background: rgba(54, 188, 247, 0.1);
-    border-bottom: 2px solid rgba(54, 188, 247, 0.3);
+    border-bottom: 1px solid rgba(54, 188, 247, 0.3);
     position: relative;
 }
 
@@ -1926,11 +2095,11 @@ body::after {
 }
 
 .cert-header-cell {
-    padding: 1.5rem 1rem;
+    padding: 0.8rem 1.2rem;
     font-weight: 700;
     color: #36BCF7;
-    text-align: center;
-    font-size: 1.1rem;
+    text-align: left;
+    font-size: 1rem;
     text-shadow: 0 0 10px rgba(54, 188, 247, 0.3);
     position: relative;
 }
@@ -1948,7 +2117,7 @@ body::after {
 
 .cert-row {
     display: grid;
-    grid-template-columns: 1fr 2fr 1.5fr 1fr;
+    grid-template-columns: 1.5fr 3.5fr 1.8fr 1.2fr;
     border-bottom: 1px solid rgba(54, 188, 247, 0.1);
     transition: all 0.3s ease;
     position: relative;
@@ -1965,14 +2134,14 @@ body::after {
 }
 
 .cert-cell {
-    padding: 1.2rem 1rem;
+    padding: 0.7rem 1.2rem;
     color: #E6F3FF;
-    text-align: center;
-    font-size: 1rem;
+    text-align: left;
+    font-size: 0.9rem;
     line-height: 1.4;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     transition: all 0.3s ease;
 }
 
@@ -1984,13 +2153,17 @@ body::after {
 .credential-link {
     color: #36BCF7;
     text-decoration: none;
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.8rem;
     border: 1px solid rgba(54, 188, 247, 0.3);
-    border-radius: 8px;
+    border-radius: 6px;
     background: rgba(54, 188, 247, 0.1);
     transition: all 0.3s ease;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 500;
+    white-space: nowrap;
+    display: inline-block;
+    width: auto;
+    min-width: fit-content;
 }
 
 .credential-link:hover {
@@ -2103,6 +2276,14 @@ body::after {
 /* Logo grayscale default, color on hover */
 .skill-item img { filter: grayscale(100%) contrast(0.9) opacity(0.9); }
 .skill-item:hover img { filter: grayscale(0%); }
+
+/* Ensure Express logo (often dark) remains visible on dark theme */
+.skill-item img.logo-express {
+    filter: invert(1) grayscale(0%) brightness(1.2) contrast(1);
+}
+.skill-item:hover img.logo-express {
+    filter: invert(1) brightness(1.35) contrast(1.05);
+}
 
 @media (max-width: 992px) {
 	.skills-layout { grid-template-columns: 1fr; }
@@ -2369,6 +2550,7 @@ body::after {
 
 /* CLI contact method */
 .cli-row { margin-top: 1.5rem; }
+.cli-hint { margin-bottom: 0.8rem; }
 .cli-command {
     display: flex; gap: 0.5rem; align-items: stretch; max-width: 380px;
     background: rgba(16,18,24,0.7);

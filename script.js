@@ -356,10 +356,71 @@ async function renderPinnedProjects() {
 }
 
 function projectCardHTML(r) {
+    // Add logos for specific projects
+    const isTerminalPal = r.repo.toLowerCase().includes('terminal-pal');
+    const isUltraCodeAI = r.repo.toLowerCase().includes('ultracodeai');
+    const isOxocare = r.repo.toLowerCase().includes('oxocare');
+    const isPharmaScan = r.repo.toLowerCase().includes('pharmascan');
+    const isVerve = r.repo.toLowerCase().includes('verve');
+    const isPrediChurn = r.repo.toLowerCase().includes('predichurn');
+    const isVishnuCLI = r.repo.toLowerCase().includes('vishnu-cli-npx');
+    const isCardiacCare = r.repo.toLowerCase().includes('cardiac-care');
+    let logos = '';
+    
+    if (isTerminalPal) {
+        logos = `
+            <div class="project-lang-badge python-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" /></div>
+            <div class="project-lang-badge ai-badge"><i class="fas fa-brain"></i></div>
+        `;
+    } else if (isUltraCodeAI) {
+        logos = `
+            <div class="project-lang-badge java-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" alt="Java" /></div>
+            <div class="project-lang-badge ai-badge"><i class="fas fa-brain"></i></div>
+        `;
+    } else if (isOxocare) {
+        logos = `
+            <div class="project-lang-badge kotlin-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kotlin/kotlin-original.svg" alt="Kotlin" /></div>
+            <div class="project-lang-badge sql-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="SQL" /></div>
+            <div class="project-lang-badge ocr-badge"><i class="fas fa-eye"></i></div>
+        `;
+    } else if (isPharmaScan) {
+        logos = `
+            <div class="project-lang-badge kotlin-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kotlin/kotlin-original.svg" alt="Kotlin" /></div>
+            <div class="project-lang-badge ai-badge"><i class="fas fa-brain"></i></div>
+        `;
+    } else if (isVerve) {
+        logos = `
+            <div class="project-lang-badge flutter-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" alt="Flutter" /></div>
+            <div class="project-lang-badge dart-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg" alt="Dart" /></div>
+            <div class="project-lang-badge ai-badge"><i class="fas fa-brain"></i></div>
+        `;
+    } else if (isPrediChurn) {
+        logos = `
+            <div class="project-lang-badge python-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" /></div>
+            <div class="project-lang-badge pytorch-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg" alt="PyTorch" /></div>
+            <div class="project-lang-badge ai-badge"><i class="fas fa-brain"></i></div>
+        `;
+    } else if (isCardiacCare) {
+        logos = `
+            <div class="project-lang-badge python-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" /></div>
+            <div class="project-lang-badge pytorch-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg" alt="PyTorch" /></div>
+            <div class="project-lang-badge ai-badge"><i class="fas fa-brain"></i></div>
+        `;
+    } else if (isVishnuCLI) {
+        logos = `
+            <div class="project-lang-badge nodejs-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js" /></div>
+            <div class="project-lang-badge npm-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/npm/npm-original-wordmark.svg" alt="npm" /></div>
+        `;
+    }
+    
+    // Add special class for projects with 3 badges positioning
+    const cardClass = (isVerve || isOxocare || isPrediChurn || isCardiacCare) ? 'project-card three-badges-project' : 'project-card';
+    
     return `
-    <div class="project-card" data-github="${r.link}">
+    <div class="${cardClass}" data-github="${r.link}">
         <div class="project-header">
             <h3>${r.repo}</h3>
+            ${logos}
         </div>
         <p>${r.description || ''}</p>
         <div class="project-badge"><i class="fab fa-github"></i><span>View project</span></div>
@@ -494,6 +555,7 @@ window.addEventListener('load', () => {
             const firstName = document.getElementById('firstName').value.trim();
             const lastName = document.getElementById('lastName').value.trim();
             const email = document.getElementById('email').value.trim();
+            const mobile = document.getElementById('mobile').value.trim();
             const message = document.getElementById('message').value.trim();
             
             if (!firstName || !lastName || !email || !message) {
@@ -518,6 +580,7 @@ window.addEventListener('load', () => {
                 const formData = new FormData();
                 formData.append('name', `${firstName} ${lastName}`);
                 formData.append('email', email);
+                formData.append('mobile', mobile);
                 formData.append('message', message);
                 formData.append('_gotcha', ''); // Honeypot to prevent spam
                 

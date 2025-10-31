@@ -433,11 +433,13 @@ body::after {
     border-radius: 16px;
     border: none;
     object-fit: cover;
-    box-shadow: 0 18px 50px rgba(0,0,0,0.45), 0 0 0 4px rgba(54,188,247,0.25);
+    box-shadow: 0 18px 50px rgba(0,0,0,0.45), 0 0 0 8px rgba(54,188,247,0.35);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .profile-img:hover {
-    transform: scale(1.05);
+    transform: scale(1.05) rotate(3deg) translateX(4px);
+    box-shadow: 0 22px 60px rgba(0,0,0,0.5), 0 0 0 10px rgba(54,188,247,0.42);
 }
 
 .profile-info .name {
@@ -1441,7 +1443,17 @@ body::after {
     .about-content {
         grid-template-columns: 1fr;
         gap: 2rem;
+        text-align: center;
     }
+    /* Override inline styles for About layout on small screens */
+    #about .about-content { grid-template-columns: 1fr !important; }
+    #about .profile-info { text-align: center !important; }
+    #about .profile-image { margin: 0 auto; }
+    .about .profile-image { margin: 0 auto; }
+    .about .profile-info { text-align: center; }
+    .about .profile-info .name { font-size: 2.2rem; }
+    .about .profile-info .title { font-size: 1.3rem; margin-bottom: 1.25rem; }
+    .about .hero-subtitle { font-size: 1rem; line-height: 1.65; }
     
     .contact-content {
         grid-template-columns: 1fr;
@@ -1521,6 +1533,10 @@ body::after {
     .about-content {
         gap: 1.5rem;
     }
+    .about { padding: 4.5rem 0; }
+    .about .profile-info .name { font-size: 2rem; }
+    .about .profile-info .title { font-size: 1.15rem; }
+    .about .hero-subtitle { font-size: 0.98rem; }
     
     .profile-info .name {
         font-size: 2rem;
@@ -2591,3 +2607,5 @@ body::after {
 .connect-card { background: rgba(20,20,20,0.45); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 1rem 1.25rem; backdrop-filter: blur(8px); box-shadow: 0 6px 18px rgba(0,0,0,0.25); }
 .connect-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.3); transform: none; }
 .contact-item .tooltip { background: rgba(20,20,20,0.95); border: 1px solid rgba(255,255,255,0.08); }
+
+

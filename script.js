@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function createParticles() {
         const particlesContainer = document.getElementById('particles');
         const isSmall = window.innerWidth <= 600;
-        const particleCount = isSmall ? 140 : 220; // rich density on all screens
+        const particleCount = isSmall ? 80 : 220; // reduced density on small screens for performance
         
         for (let i = 0; i < particleCount; i++) {
             const particle = document.createElement('div');
@@ -64,10 +64,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Wire certification credential URLs
     const certificationUrls = {
-        cert1: 'https://www.udemy.com/certificate/UC-c78f2ef5-7cfb-4f63-9078-9c42b25dc2e7',
-        cert2: 'https://www.udemy.com/certificate/UC-e2fda013-13a5-4dd0-bba6-2b46f4261508/',
-        cert3: 'https://www.sololearn.com/certificates/CC-WVFVQYXD',
-        cert4: 'https://www.coursera.org/account/accomplishments/verify/QVOUHN8W8YYF'
+        cert1: 'https://drive.google.com/drive/folders/1ZPzoIQrLTql-kr-yDLVZsK10XZW0NkDw?usp=sharing',
+        cert2: 'https://drive.google.com/drive/folders/1ZPzoIQrLTql-kr-yDLVZsK10XZW0NkDw?usp=sharing',
+        cert3: 'https://drive.google.com/drive/folders/1ZPzoIQrLTql-kr-yDLVZsK10XZW0NkDw?usp=sharing',
+        cert4: 'https://drive.google.com/drive/folders/1ZPzoIQrLTql-kr-yDLVZsK10XZW0NkDw?usp=sharing'   
     };
     Object.entries(certificationUrls).forEach(([id, url]) => {
         const el = document.getElementById(id);

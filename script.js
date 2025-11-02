@@ -546,68 +546,73 @@ window.addEventListener('load', () => {
         } catch (_) {}
     }, 50);
 
- // Handle contact form submission
-    const contactForm = document.getElementById('contactForm');
-    if (contactForm) {
-        contactForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const firstName = document.getElementById('firstName').value.trim();
-            const lastName = document.getElementById('lastName').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const mobile = document.getElementById('mobile').value.trim();
-            const message = document.getElementById('message').value.trim();
-            
-            if (!firstName || !lastName || !email || !message) {
-                showNotification('Please fill all required fields.', 'error');
-                return;
-            }
-            
-            // Validate email format
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                showNotification('Please enter a valid email address.', 'error');
-                return;
-            }
-            
-            // Show loading state
-            const submitBtn = contactForm.querySelector('.submit-btn');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<span>Sending...</span><i class="fas fa-spinner fa-spin"></i>';
-            submitBtn.disabled = true;
-            
-            try {
-                const formData = new FormData();
-                formData.append('name', `${firstName} ${lastName}`);
-                formData.append('email', email);
-                formData.append('mobile', mobile);
-                formData.append('message', message);
-                formData.append('_gotcha', ''); // Honeypot to prevent spam
-                
-                const response = await fetch('https://getform.io/f/bxozyeza', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                if (response.ok) {
-                    showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
-                    contactForm.reset();
-                } else {
-                    throw new Error('Failed to send message');
-                }
-                
-            } catch (error) {
-                console.error('Error sending email:', error);
-                showNotification('Failed to send message. Please try again.', 'error');
-            } finally {
-                // Reset button state
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }
-        });
-    }
-});
-
+// Handle contact form submission
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const mobile = document.getElementById('mobile').value.trim();
+            const message = document.getElementById('message').value.trim();
+            
+            if (!firstName || !lastName || !email || !message) {
+J               showNotification('Please fill all required fields.', 'error');
+                return;
+            }
+            
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+is               showNotification('Please enter a valid email address.', 'error');
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = contactForm.querySelector('.submit-btn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span>Sending...</span><i class="fas fa-spinner fa-spin"></i>';
+            submitBtn.disabled = true;
+            
+            try {
+                const formData = new FormData();
+s               formData.append('name', `${firstName} ${lastName}`);
+                formData.append('email', email);
+                formData.append('mobile', mobile);
+                formData.append('message', message);
+                
+                // 1. ADD YOUR WEB3FORMS KEY HERE
+source_title:                formData.append('access_key', '01606bbf-0c7e-40da-b88d-a99a934b8147');
+                
+                formData.append('_gotcha', ''); // Honeypot to prevent spam
+                
+                // 2. CHANGE THE FETCH URL
+                const response = await fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    body: formData
+                });
+A               
+                if (response.ok) {
+                    showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
+                    contactForm.reset();
+                } else {
+                  s   // 3. (Optional but good) Get error message from Web3Forms
+                    const result = await response.json();
+                    throw new Error(result.message || 'Failed to send message');
+                }
+                
+            } catch (error) {
+D               console.error('Error sending email:', error);
+                showNotification(error.message || 'Failed to send message. Please try again.', 'error');
+            } finally {
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    }
 // --- Gallery (safe, self-contained) ---
 function renderGallery() {
     const grid = document.getElementById('galleryGrid');

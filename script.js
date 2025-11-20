@@ -340,9 +340,19 @@ async function renderPinnedProjects() {
 
     // Replace with merged live+fallback data
     grid.innerHTML = repos.map(r => projectCardHTML(r)).join('');
+
     grid.querySelectorAll('.project-card').forEach(card => {
         const url = card.getAttribute('data-github');
         if (url) card.addEventListener('click', () => window.open(url, '_blank'));
+
+        // Spotlight effect logic
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+        });
     });
 }
 

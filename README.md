@@ -12,52 +12,18 @@ A modern portfolio website with a functional contact form that sends emails usin
 
 ## Email Setup Instructions
 
-### 1. SendGrid Setup
+### Web3Forms Setup
 
-1. **Create a SendGrid Account**
-   - Go to [SendGrid](https://sendgrid.com/) and create a free account
-   - Verify your email address
+This portfolio uses [Web3Forms](https://web3forms.com/) for the contact form functionality. It's a serverless contact form solution that sends emails directly to your inbox without requiring backend code.
 
-2. **Create an API Key**
-   - In SendGrid dashboard, go to Settings → API Keys
-   - Click "Create API Key"
-   - Choose "Full Access" or "Restricted Access" with "Mail Send" permissions
-   - Copy the API key (you'll only see it once!)
+1. **Access Key**: The contact form is configured with a static Access Key in `script.js`.
+2. **Customization**: You can customize the success page or email subject by modifying the hidden fields in the form data within `script.js`.
 
-3. **Verify Your Sender Email**
-   - Go to Settings → Sender Authentication
-   - Verify your domain or at least verify a single sender email
-   - This is required for sending emails
+### Testing the Contact Form
 
-### 2. Vercel Environment Variables
-
-1. **Deploy to Vercel**
-   - Push your code to GitHub
-   - Connect your repository to Vercel
-   - Deploy the project
-
-2. **Add Environment Variables**
-   - In your Vercel dashboard, go to your project
-   - Navigate to Settings → Environment Variables
-   - Add the following variables:
-
-   ```
-   SENDGRID_API_KEY=your_sendgrid_api_key_here
-   RECIPIENT_EMAIL=priyanv783@gmail.com
-   SENDGRID_FROM_EMAIL=your_verified_email@yourdomain.com
-   ```
-
-   **Important Notes:**
-   - `SENDGRID_FROM_EMAIL` must be the email you verified in SendGrid
-   - `RECIPIENT_EMAIL` is where you want to receive contact form messages
-   - Make sure to redeploy after adding environment variables
-
-### 3. Testing the Contact Form
-
-1. Fill out the contact form on your deployed site
-2. Click "Send Message"
-3. Check your email (the one set as `RECIPIENT_EMAIL`)
-4. You should receive a beautifully formatted email with the contact form details
+1. Fill out the contact form on your deployed site.
+2. Click "Send Message".
+3. You should receive an email at your registered Web3Forms email address.
 
 ## File Structure
 
@@ -65,10 +31,8 @@ A modern portfolio website with a functional contact form that sends emails usin
 portfolio/
 ├── index.html              # Main HTML file
 ├── styles.css              # All CSS styles
-├── script.js               # JavaScript functionality
-├── package.json            # Dependencies (SendGrid)
-├── api/
-│   └── send-email.js       # Vercel serverless function
+├── script.js               # JavaScript functionality (contains Web3Forms logic)
+├── package.json            # Project metadata
 ├── assets/
 │   └── images/             # Portfolio images
 └── README.md               # This file
@@ -77,52 +41,29 @@ portfolio/
 ## Customization
 
 ### Changing Email Recipient
-Update the `RECIPIENT_EMAIL` environment variable in Vercel to change where contact form emails are sent.
-
-### Styling the Email Template
-Edit the HTML template in `api/send-email.js` to customize the email appearance.
+To change the recipient, you need to create a new Access Key at [Web3Forms](https://web3forms.com/) and update the `access_key` value in `script.js`.
 
 ### Form Fields
-Modify the form fields in `index.html` and update the validation in both `script.js` and `api/send-email.js`.
+Modify the form fields in `index.html` and update the validation and `FormData` construction in `script.js`.
 
 ## Troubleshooting
 
 ### Common Issues
 
 1. **"Failed to send email" error**
-   - Check if SendGrid API key is correct
-   - Verify sender email is authenticated in SendGrid
-   - Check Vercel function logs for detailed errors
+   - Check if the Access Key in `script.js` is correct.
+   - Ensure you are not exceeding the free tier limits of Web3Forms.
+   - Check the browser console for network errors.
 
 2. **Emails not received**
-   - Check spam folder
-   - Verify `RECIPIENT_EMAIL` is correct
-   - Check SendGrid activity logs
-
-3. **CORS errors**
-   - Make sure you're calling the API from the same domain
-   - Check Vercel deployment URL
-
-### Debugging
-
-- Check Vercel function logs in your dashboard
-- Use browser developer tools to see network requests
-- Verify environment variables are set correctly
-
-## Security Notes
-
-- The SendGrid API key is stored securely in Vercel environment variables
-- Form validation happens both client-side and server-side
-- No data is stored permanently - emails are sent directly
-- Rate limiting is handled by SendGrid
+   - Check your spam folder.
+   - Verify your email address with Web3Forms.
 
 ## Support
 
 If you encounter issues:
-1. Check the troubleshooting section above
-2. Review SendGrid documentation
-3. Check Vercel function logs
-4. Ensure all environment variables are set correctly
+1. Check the troubleshooting section above.
+2. Review [Web3Forms Documentation](https://docs.web3forms.com/).
 
 ---
 

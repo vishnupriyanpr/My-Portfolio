@@ -1,19 +1,21 @@
 {
   "name": "portfolio-contact-form",
   "version": "1.0.0",
-  "description": "Portfolio with contact form email functionality",
+  "description": "Portfolio with contact form functionality",
   "main": "index.html",
   "scripts": {
     "dev": "vercel dev",
     "build": "echo 'No build step required for static site'",
     "start": "vercel dev"
   },
-  "dependencies": {
-    "@sendgrid/mail": "^7.7.0"
-  },
+  "dependencies": {},
   "devDependencies": {},
-  "keywords": ["portfolio", "contact-form", "sendgrid", "vercel"],
+  "keywords": [
+    "portfolio",
+    "contact-form",
+    "web3forms",
+    "vercel"
+  ],
   "author": "Vishnupriyan P R",
   "license": "MIT"
 }
-

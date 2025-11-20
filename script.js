@@ -1,14 +1,14 @@
 // Smooth scrolling for navigation links
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Create dynamic particles
     createParticles();
-    
+
     // Particle creation function
     function createParticles() {
         const particlesContainer = document.getElementById('particles');
         const isSmall = window.innerWidth <= 600;
         const particleCount = isSmall ? 80 : 220; // reduced density on small screens for performance
-        
+
         for (let i = 0; i < particleCount; i++) {
             const particle = document.createElement('div');
             particle.className = 'particle';
@@ -23,13 +23,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     // Smooth scrolling for navigation (only navbar/footer anchors)
     const navLinks = document.querySelectorAll('.nav-menu a[href^="#"], .footer-links a[href^="#"]');
-    
+
     navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
+        link.addEventListener('click', function (e) {
             e.preventDefault();
             const targetId = this.getAttribute('href');
             const targetSection = document.querySelector(targetId);
-            
+
             if (targetSection) {
                 const offsetTop = targetSection.offsetTop - 80; // Account for fixed navbar
                 window.scrollTo({
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add active class to navigation based on scroll position
     const sections = document.querySelectorAll('section[id]');
     const navItems = document.querySelectorAll('.nav-menu a');
-    
+
     window.addEventListener('scroll', () => {
         let current = '';
         sections.forEach(section => {
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
         cert1: 'https://drive.google.com/drive/folders/1ZPzoIQrLTql-kr-yDLVZsK10XZW0NkDw?usp=sharing',
         cert2: 'https://drive.google.com/drive/folders/1ZPzoIQrLTql-kr-yDLVZsK10XZW0NkDw?usp=sharing',
         cert3: 'https://drive.google.com/drive/folders/1ZPzoIQrLTql-kr-yDLVZsK10XZW0NkDw?usp=sharing',
-        cert4: 'https://drive.google.com/drive/folders/1ZPzoIQrLTql-kr-yDLVZsK10XZW0NkDw?usp=sharing'   
+        cert4: 'https://drive.google.com/drive/folders/1ZPzoIQrLTql-kr-yDLVZsK10XZW0NkDw?usp=sharing'
     };
     Object.entries(certificationUrls).forEach(([id, url]) => {
         const el = document.getElementById(id);
@@ -85,8 +85,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const floatingHeart = document.getElementById('floatingHeart');
     const heartTooltip = document.getElementById('heartTooltip');
     let rocketHover = false;
-    
-    floatingHeart.addEventListener('click', function() {
+
+    floatingHeart.addEventListener('click', function () {
         // Create a temporary input to copy the command
         const tempInput = document.createElement('input');
         tempInput.value = 'npx vishnupriyan';
@@ -94,10 +94,10 @@ document.addEventListener('DOMContentLoaded', function() {
         tempInput.select();
         document.execCommand('copy');
         document.body.removeChild(tempInput);
-        
+
         // Show success message
         showNotification('Command copied to clipboard!', 'success');
-        
+
         // Add click animation
         this.style.transform = 'scale(1.3) rotate(25deg)';
         setTimeout(() => {
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Copy to clipboard functionality for the contact section
     const copyBtn = document.querySelector('.copy-btn');
     if (copyBtn) {
-        copyBtn.addEventListener('click', function() {
+        copyBtn.addEventListener('click', function () {
             const command = this.parentElement.querySelector('code').textContent;
             copyToClipboard(command);
         });
@@ -146,43 +146,8 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(el);
     });
 
-    // Add typing effect to hero title
-    const typingTarget = document.getElementById('typingText');
-    if (typingTarget) {
-        const lines = [
-            'Competitive Programmer',
-            'AI & ML Enthusiast',
-            'Tech Explorer — chasing the next big innovation 🚀',
-            'Open‑Source Contributor',
-            'Car Guy — fueled by speed and curiosity 🏎️'
-        ];
-        let idx = 0;
-        let char = 0;
-        let deleting = false;
-        const typeSpeed = () => (deleting ? 30 : 50);
-        const pauseBetween = 1100;
+    // Typing effect removed in favor of CSS sliding animation
 
-        const tick = () => {
-            const full = lines[idx];
-            if (!deleting) {
-                typingTarget.textContent = full.slice(0, char + 1);
-                char++;
-                if (char === full.length) {
-                    deleting = true;
-                    return setTimeout(tick, pauseBetween);
-                }
-            } else {
-                typingTarget.textContent = full.slice(0, char - 1);
-                char--;
-                if (char === 0) {
-                    deleting = false;
-                    idx = (idx + 1) % lines.length;
-                }
-            }
-            setTimeout(tick, typeSpeed());
-        };
-        setTimeout(tick, 400);
-    }
 
     // Parallax effect for background elements
     // remove heavy parallax selector; keep simple passive scroll marker
@@ -230,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }, { threshold: 0.5 });
-        
+
         aboutObserver.observe(aboutSection);
     }
 
@@ -287,6 +252,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Render pinned repositories into Projects
     renderPinnedProjects();
+
+    // Timeline Beam Animation
+    const timelineWrapper = document.getElementById('timelineWrapper');
+    const timelineBeam = document.getElementById('timelineBeam');
+
+    if (timelineWrapper && timelineBeam) {
+        window.addEventListener('scroll', () => {
+            const rect = timelineWrapper.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+
+            // Calculate scroll progress within the timeline section
+            // Start slightly before the section enters (rect.top < viewportHeight)
+            // End when the section leaves (rect.bottom > 0)
+
+            if (rect.top < viewportHeight && rect.bottom > 0) {
+                // Determine beam position relative to the track
+                // We want the beam to follow the center of the viewport or just below the header
+                const relativeY = Math.min(Math.max(0, (viewportHeight / 2) - rect.top), rect.height - 100);
+
+                timelineBeam.style.top = `${relativeY}px`;
+                timelineBeam.style.opacity = '1';
+            } else {
+                timelineBeam.style.opacity = '0';
+            }
+        });
+    }
 });
 
 async function renderPinnedProjects() {
@@ -294,11 +285,11 @@ async function renderPinnedProjects() {
     if (!grid) return;
 
     const fallback = [
-        { repo: 'Terminal-pal ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/terminal-pal', description: 'AI Terminal Pal: multi-AI terminal assistant with smart project analysis (Online + Offline LLMs powered).'},
-        { repo: 'Oxocare ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/oxocare', description: 'MedDoc Scanner: OCR + secure storage with intuitive dashboard, and Global Medical DataBase (Android App - Kotlin).'},
-        { repo: 'Verve ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/verve', description: 'AI-powered nutritional advisor for chronic disease management (Android App - Flutter).'},
-        { repo: 'UltraCodeAI ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/ultracodeai', description: 'AI-powered IntelliJ plugin: context-aware prompts and refactors (Online + Offline LLMs powered).'},
-        { repo: 'PrediChurn ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/PrediChurn', description: 'End-to-end churn prediction ML pipeline with feature engineering and tuning (Churn - Prediction).'},
+        { repo: 'Terminal-pal ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/terminal-pal', description: 'AI Terminal Pal: multi-AI terminal assistant with smart project analysis (Online + Offline LLMs powered).' },
+        { repo: 'Oxocare ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/oxocare', description: 'MedDoc Scanner: OCR + secure storage with intuitive dashboard, and Global Medical DataBase (Android App - Kotlin).' },
+        { repo: 'Verve ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/verve', description: 'AI-powered nutritional advisor for chronic disease management (Android App - Flutter).' },
+        { repo: 'UltraCodeAI ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/ultracodeai', description: 'AI-powered IntelliJ plugin: context-aware prompts and refactors (Online + Offline LLMs powered).' },
+        { repo: 'PrediChurn ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/PrediChurn', description: 'End-to-end churn prediction ML pipeline with feature engineering and tuning (Churn - Prediction).' },
         { repo: 'PharmaScan ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/PharmaScan', description: 'Medicine strip scanner powered by AI for quick identification (Android App - Kotlin).' },
         { repo: 'Vishnu-cli-npx ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/Vishnu-cli-npx', description: 'Personal, zero-install CLI card — run npx vishnupriyan to view profile, socials, and projects in your terminal.' },
         { repo: 'Cardiac-Care ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/Cardiac-Care', description: 'AI-powered heart health suite: ECG analysis, chatbot, diet planner, report summarizer, patient records, and ambulance booking.' },
@@ -366,7 +357,7 @@ function projectCardHTML(r) {
     const isVishnuCLI = r.repo.toLowerCase().includes('vishnu-cli-npx');
     const isCardiacCare = r.repo.toLowerCase().includes('cardiac-care');
     let logos = '';
-    
+
     if (isTerminalPal) {
         logos = `
             <div class="project-lang-badge python-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" /></div>
@@ -412,10 +403,10 @@ function projectCardHTML(r) {
             <div class="project-lang-badge npm-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/npm/npm-original-wordmark.svg" alt="npm" /></div>
         `;
     }
-    
+
     // Add special class for projects with 3 badges positioning
     const cardClass = (isVerve || isOxocare || isPrediChurn || isCardiacCare) ? 'project-card three-badges-project' : 'project-card';
-    
+
     return `
     <div class="${cardClass}" data-github="${r.link}">
         <div class="project-header">
@@ -450,14 +441,14 @@ function fallbackCopyToClipboard(text) {
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
-    
+
     try {
         document.execCommand('copy');
         showNotification('Copied to clipboard! 📋', 'success');
     } catch (err) {
         showNotification('Failed to copy to clipboard', 'error');
     }
-    
+
     document.body.removeChild(textArea);
 }
 
@@ -465,7 +456,7 @@ function fallbackCopyToClipboard(text) {
 function showNotification(message, type = 'info') {
     const existingNotifications = document.querySelectorAll('.notification');
     existingNotifications.forEach(notification => notification.remove());
-    
+
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.innerHTML = `
@@ -474,17 +465,17 @@ function showNotification(message, type = 'info') {
             <button class="notification-close">&times;</button>
         </div>
     `;
-    
+
     notification.style.cssText = `
         position: fixed; top: 20px; right: 20px; background: ${type === 'success' ? '#36BCF7' : '#ff6b6b'}; color: ${type === 'success' ? 'black' : 'white'}; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); z-index: 10000; transform: translateX(400px); transition: transform 0.3s ease; max-width: 300px;`;
-    
+
     document.body.appendChild(notification);
     setTimeout(() => { notification.style.transform = 'translateX(0)'; }, 100);
     setTimeout(() => {
         notification.style.transform = 'translateX(400px)';
         setTimeout(() => { if (notification.parentNode) notification.parentNode.removeChild(notification); }, 300);
     }, 4000);
-    
+
     const closeBtn = notification.querySelector('.notification-close');
     closeBtn.addEventListener('click', () => {
         notification.style.transform = 'translateX(400px)';
@@ -520,7 +511,7 @@ window.addEventListener('load', () => {
     document.head.appendChild(loadingStyles);
 
     // Safely render gallery (no impact if section absent)
-    try { renderGallery(); } catch (_) {}
+    try { renderGallery(); } catch (_) { }
 
     // After gallery loads, equalize the last visual row so bottoms align
     setTimeout(() => {
@@ -543,62 +534,77 @@ window.addEventListener('load', () => {
                     img.style.objectFit = 'cover';
                 }
             });
-        } catch (_) {}
+        } catch (_) { }
     }, 50);
 
- // Handle contact form submission
+    // Handle contact form submission
+    // Handle contact form submission
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
         contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const firstName = document.getElementById('firstName').value.trim();
             const lastName = document.getElementById('lastName').value.trim();
             const email = document.getElementById('email').value.trim();
             const mobile = document.getElementById('mobile').value.trim();
             const message = document.getElementById('message').value.trim();
-            
+
             if (!firstName || !lastName || !email || !message) {
                 showNotification('Please fill all required fields.', 'error');
                 return;
             }
-            
+
             // Validate email format
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 showNotification('Please enter a valid email address.', 'error');
                 return;
             }
-            
+
             // Show loading state
             const submitBtn = contactForm.querySelector('.submit-btn');
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<span>Sending...</span><i class="fas fa-spinner fa-spin"></i>';
             submitBtn.disabled = true;
-            
+
             try {
-                const formData = new FormData();
-                formData.append('name', `${firstName} ${lastName}`);
-                formData.append('email', email);
-                formData.append('mobile', mobile);
-                formData.append('message', message);
-                formData.append('_gotcha', ''); // Honeypot to prevent spam
-                
-                const response = await fetch('https://getform.io/f/bxozyeza', {
+                // Create JSON object instead of FormData
+                const jsonPayload = {
+                    access_key: '01606bbf-0c7e-40da-b88d-a99a934b8147',
+                    name: `${firstName} ${lastName}`,
+                    email: email,
+                    message: message,
+                    subject: 'New Portfolio Contact Message'
+                };
+
+                if (mobile) {
+                    jsonPayload.mobile = mobile;
+                }
+
+                const response = await fetch('https://api.web3forms.com/submit', {
                     method: 'POST',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(jsonPayload)
                 });
-                
-                if (response.ok) {
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
                     showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
                     contactForm.reset();
                 } else {
-                    throw new Error('Failed to send message');
+                    console.error('Web3Forms Error:', data);
+                    throw new Error(data.message || 'Failed to send message');
                 }
-                
+
             } catch (error) {
                 console.error('Error sending email:', error);
-                showNotification('Failed to send message. Please try again.', 'error');
+                // Show the actual error message if available
+                showNotification(error.message || 'Failed to send message. Please try again.', 'error');
             } finally {
                 // Reset button state
                 submitBtn.innerHTML = originalText;
@@ -666,10 +672,10 @@ function galleryCard(src, idx) {
     const onerr = '';
 
     // Random frame style
-    const frames = ['frame-soft','frame-pill','frame-cut','frame-chamfer'];
-    const tilts = ['tilt-1','tilt-2','tilt-3',''];
-    const f = frames[Math.floor(Math.random()*frames.length)];
-    const t = tilts[Math.floor(Math.random()*tilts.length)];
+    const frames = ['frame-soft', 'frame-pill', 'frame-cut', 'frame-chamfer'];
+    const tilts = ['tilt-1', 'tilt-2', 'tilt-3', ''];
+    const f = frames[Math.floor(Math.random() * frames.length)];
+    const t = tilts[Math.floor(Math.random() * tilts.length)];
 
     return `
     <div class="gallery-card ${t} ${extraCard}">

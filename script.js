@@ -259,6 +259,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (timelineWrapper && timelineBeam) {
         window.addEventListener('scroll', () => {
+            // Disable animation on mobile to prevent stuttering
+            if (window.innerWidth < 768) {
+                timelineBeam.style.opacity = '0'; // Hide beam on mobile
+                return;
+            }
+
             const rect = timelineWrapper.getBoundingClientRect();
             const viewportHeight = window.innerHeight;
 

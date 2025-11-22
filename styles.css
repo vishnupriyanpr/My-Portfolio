@@ -4162,27 +4162,27 @@ body::after {
 
     /* --- General Layout & Spacing --- */
     .container {
-        padding: 0 1rem;
-        /* Tight horizontal padding */
+        padding: 0 0.8rem;
+        /* Ultra tight horizontal padding */
     }
 
     .section-title {
-        font-size: 1.6rem;
-        /* Minimal title */
+        font-size: 1.4rem;
+        /* Ultra minimal title */
         margin-bottom: 4rem;
         /* Massive vertical space */
         letter-spacing: -0.5px;
     }
 
     .section-subtitle {
-        font-size: 0.85rem;
-        /* Minimal subtitle */
+        font-size: 0.8rem;
+        /* Ultra minimal subtitle */
         margin-top: -2rem;
         margin-bottom: 6rem;
         /* Massive vertical space */
-        padding: 0 1rem;
-        line-height: 1.6;
-        opacity: 0.8;
+        padding: 0 0.5rem;
+        line-height: 1.5;
+        opacity: 0.75;
     }
 
     /* --- Hero Section --- */
@@ -4224,8 +4224,8 @@ body::after {
     }
 
     .hero-title {
-        font-size: 1.5rem;
-        /* Very small for a title */
+        font-size: 1.3rem;
+        /* Ultra small title */
         line-height: 1.4;
         margin-bottom: 1.5rem;
         word-wrap: break-word;
@@ -4234,16 +4234,16 @@ body::after {
     }
 
     .sliding-text-container {
-        height: 1.8rem;
+        height: 1.6rem;
         margin-bottom: 3rem;
         /* More space */
         width: 100%;
     }
 
     .sliding-item {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         /* Tiny sliding text */
-        height: 1.8rem;
+        height: 1.6rem;
         white-space: nowrap;
     }
 
@@ -4257,23 +4257,23 @@ body::after {
     }
 
     .profile-img {
-        width: 220px;
+        width: 200px;
         /* Smaller image */
-        height: 220px;
-        max-width: 70vw;
+        height: 200px;
+        max-width: 65vw;
         object-fit: cover;
         object-position: top center;
         border-radius: 20px;
         box-shadow:
             0 10px 30px rgba(0, 0, 0, 0.5),
-            0 0 0 4px rgba(54, 188, 247, 0.35);
+            0 0 0 3px rgba(54, 188, 247, 0.3);
         /* Thinner frame */
     }
 
     /* Specific fix for About section image */
     .about .profile-img {
         width: 100%;
-        max-width: 240px;
+        max-width: 220px;
         height: auto;
         aspect-ratio: 1/1;
         object-fit: cover;
@@ -4282,7 +4282,7 @@ body::after {
         display: block;
         box-shadow:
             0 10px 30px rgba(0, 0, 0, 0.5),
-            0 0 0 4px rgba(54, 188, 247, 0.35);
+            0 0 0 3px rgba(54, 188, 247, 0.3);
     }
 
     /* --- Achievements Section --- */
@@ -4294,7 +4294,7 @@ body::after {
 
     .achievement-card {
         min-height: auto;
-        padding: 1rem;
+        padding: 0.8rem;
         /* Ultra minimized padding */
         border-width: 1px;
     }
@@ -4310,11 +4310,11 @@ body::after {
 
     .achievement-image {
         aspect-ratio: 16/9;
-        margin-bottom: 1rem;
+        margin-bottom: 0.8rem;
     }
 
     .achievement-title {
-        font-size: 1rem;
+        font-size: 0.9rem;
         /* Tiny title */
     }
 
@@ -4328,7 +4328,7 @@ body::after {
     .project-card {
         transform: none !important;
         margin-bottom: 0;
-        padding: 1rem;
+        padding: 0.8rem;
         /* Ultra minimized padding */
         background: rgba(20, 20, 22, 0.9);
         border: 1px solid rgba(54, 188, 247, 0.15);
@@ -4361,7 +4361,7 @@ body::after {
     }
 
     .project-header h3 {
-        font-size: 1rem;
+        font-size: 0.9rem;
         /* Tiny title */
     }
 
@@ -4393,11 +4393,11 @@ body::after {
     }
 
     .timeline-dot {
-        width: 10px;
+        width: 8px;
         /* Smaller dot */
-        height: 10px;
+        height: 8px;
         background: var(--primary-color);
-        box-shadow: 0 0 8px rgba(54, 188, 247, 0.5);
+        box-shadow: 0 0 6px rgba(54, 188, 247, 0.5);
     }
 
     .timeline-content-col {
@@ -4405,13 +4405,13 @@ body::after {
     }
 
     .timeline-title {
-        font-size: 1rem;
+        font-size: 0.9rem;
         /* Tiny title */
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.2rem;
     }
 
     .timeline-company {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         /* Tiny text */
         color: #fff;
     }
@@ -4430,12 +4430,12 @@ body::after {
         backdrop-filter: blur(12px);
         margin-bottom: 3rem;
         /* Increased spacing */
-        padding: 1rem;
+        padding: 0.8rem;
         /* Ultra minimized padding */
-        border-radius: 14px;
+        border-radius: 12px;
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.4rem;
         position: relative;
         overflow: hidden;
     }
@@ -4462,7 +4462,7 @@ body::after {
 
     .cert-cell::before {
         content: attr(data-label);
-        font-size: 0.6rem;
+        font-size: 0.55rem;
         /* Tiny label */
         text-transform: uppercase;
         letter-spacing: 1px;
@@ -4475,12 +4475,12 @@ body::after {
     .credential-link {
         width: 100%;
         text-align: center;
-        margin-top: 0.5rem;
-        padding: 0.5rem;
+        margin-top: 0.4rem;
+        padding: 0.4rem;
         /* Ultra minimized padding */
         background: rgba(54, 188, 247, 0.05);
         border: 1px solid rgba(54, 188, 247, 0.2);
-        font-size: 0.75rem;
+        font-size: 0.7rem;
     }
 }
 

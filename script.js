@@ -628,6 +628,101 @@ window.addEventListener('load', () => {
             }
         });
     }
+    // --- Achievements 3D & Magnetic Effects ---
+    const cards = document.querySelectorAll('.achievement-card-3d');
+
+    cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Calculate center
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            // Calculate distance from center
+            const deltaX = x - centerX;
+            const deltaY = y - centerY;
+
+            // Calculate rotation (max 8deg)
+            const rotateX = (deltaY / centerY) * -8; // Invert Y for tilt
+            const rotateY = (deltaX / centerX) * 8;
+
+            // Calculate translation (move towards cursor slightly)
+            const translateX = (deltaX / centerX) * 10;
+            const translateY = (deltaY / centerY) * 10;
+
+            // Apply transform to the inner card
+            const inner = card.querySelector('.card-inner');
+            if (inner) {
+                inner.style.transform = `rotateX(${rotateX}deg) rotateY(${180 + rotateY}deg) translate3d(${translateX}px, ${translateY}px, 0)`;
+                // Note: We add 180 to rotateY because the hover effect already flips it. 
+                // Wait, the hover effect flips it to 180. If we are hovering, we want to see the back?
+                // Actually, the requirement says "Cards flip 180 degrees on hover".
+                // If we want the magnetic effect to work on BOTH sides, we need to know if it's flipped.
+                // But CSS hover handles the flip. 
+                // Conflict: CSS hover rotates Y to 180. JS overwrites transform.
+                // Solution: We should apply the magnetic tilt to a wrapper OR handle the flip state in JS.
+                // Simpler approach for "Flip on Hover":
+                // If we are hovering, it IS flipped. So base rotation is 180.
+                // But wait, the user wants "Magnetic Cursor Effect (within 150px radius)".
+                // If it's hover, we are definitely within radius.
+                // Let's assume the magnetic effect adds to the flip.
+
+                // Correction: The CSS hover does `transform: rotateY(180deg)`.
+                // If we set style directly, we override the CSS hover.
+                // We need to conditionally apply the base rotation.
+                // Since we are in 'mousemove' (hover), the card IS flipped (showing back).
+                // So base is 180deg.
+
+                inner.style.transform = `rotateX(${rotateX}deg) rotateY(${180 + rotateY}deg) translate3d(${translateX}px, ${translateY}px, 0)`;
+            }
+        });
+
+        card.addEventListener('mouseleave', () => {
+            const inner = card.querySelector('.card-inner');
+            if (inner) {
+                // Clear inline style to let CSS take over (return to default state)
+                inner.style.transform = '';
+            }
+        });
+    });
+
+    // --- Parallax Scroll Effect for Achievements ---
+    // Move cards at different speeds based on column/position
+    const masonryGrid = document.querySelector('.achievements-masonry');
+    if (masonryGrid) {
+        window.addEventListener('scroll', () => {
+            if (window.innerWidth < 768) return; // Disable on mobile
+
+            const scrollY = window.scrollY;
+            const viewportHeight = window.innerHeight;
+
+            cards.forEach((card, index) => {
+                const rect = card.getBoundingClientRect();
+
+                // Only animate if in view (with buffer)
+                if (rect.top < viewportHeight + 100 && rect.bottom > -100) {
+                    // Determine speed based on index (simulating columns)
+                    // 0, 3, 6 -> Col 1 (Fast)
+                    // 1, 4, 7 -> Col 2 (Slow)
+                    // 2, 5, 8 -> Col 3 (Medium)
+                    let speed = 0;
+                    if (index % 3 === 0) speed = -15; // Move up faster
+                    else if (index % 3 === 1) speed = 0; // Normal
+                    else speed = 15; // Move up slower (lag)
+
+                    // Calculate offset based on scroll progress through viewport
+                    // 0 when centered, +/- when above/below
+                    const centerOffset = (viewportHeight / 2) - (rect.top + rect.height / 2);
+                    const parallaxY = (centerOffset / viewportHeight) * speed;
+
+                    card.style.transform = `translateY(${parallaxY}px)`;
+                }
+            });
+        });
+    }
 });
 
 // --- Gallery (safe, self-contained) ---

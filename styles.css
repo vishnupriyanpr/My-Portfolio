@@ -4020,11 +4020,11 @@ body::after {
 
 @media (max-width: 768px) {
     .experiences {
-        padding: 4rem 0;
+        padding: 1rem 0;
     }
 
     .experiences-timeline {
-        padding: 0 1rem;
+        padding: 0 0.5rem;
     }
 
     .experiences-timeline::before {
@@ -4034,30 +4034,30 @@ body::after {
     .experience-card {
         grid-template-columns: 1fr;
         gap: 0.5rem;
-        padding-left: 50px;
-        margin-bottom: 2rem;
+        padding-left: 40px;
+        margin-bottom: 1rem;
     }
 
     .experience-card:nth-child(even) {
-        padding-left: 50px;
+        padding-left: 40px;
     }
 
     .experience-marker {
         left: 0;
-        width: 18px;
-        height: 18px;
+        width: 14px;
+        height: 14px;
     }
 
     .experience-content {
-        padding: 1.5rem;
+        padding: 0.8rem;
     }
 
     .experience-title {
-        font-size: 1.3rem;
+        font-size: 1rem;
     }
 
     .experience-company {
-        font-size: 1rem;
+        font-size: 0.8rem;
     }
 }
 
@@ -4382,8 +4382,8 @@ body::after {
     }
 
     .timeline-entries {
-        gap: 8rem;
-        /* Extreme gap between entries */
+        gap: 2rem;
+        /* Reduced gap from 8rem to 2rem */
     }
 
     .timeline-marker-col {
@@ -4416,6 +4416,21 @@ body::after {
         color: #fff;
     }
 
+    .timeline-description {
+        font-size: 0.75rem;
+        line-height: 1.4;
+        margin-bottom: 0.5rem;
+    }
+
+    .experience-skills {
+        gap: 0.3rem;
+    }
+
+    .exp-skill-badge {
+        font-size: 0.6rem;
+        padding: 0.2rem 0.5rem;
+    }
+
     /* --- Certifications --- */
     .certifications-table {
         background: transparent;
@@ -4428,8 +4443,8 @@ body::after {
         background: rgba(25, 25, 30, 0.8);
         border: 1px solid rgba(54, 188, 247, 0.1);
         backdrop-filter: blur(12px);
-        margin-bottom: 3rem;
-        /* Increased spacing */
+        margin-bottom: 1.5rem;
+        /* Reduced spacing from 3rem */
         padding: 0.8rem;
         /* Ultra minimized padding */
         border-radius: 12px;
@@ -4590,6 +4605,8 @@ body::after {
     border: 1px solid rgba(54, 188, 247, 0.3);
     box-shadow: 0 0 15px rgba(54, 188, 247, 0.1);
     background: #1a1a1a;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
 }
 
 /* Front Face Styling */

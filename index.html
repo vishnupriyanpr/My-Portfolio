@@ -176,64 +176,28 @@
         </div>
     </section>
 
-    <!-- Skills Section (Flat Grid) -->
+    <!-- Skills Section (Neural Network) -->
     <section id="skills" class="skills">
-        <div class="container skills-layout">
-            <div class="skills-left">
-                <h2 class="section-title" style="text-align:left;">my technical stack includes various tools <br />and
-                    technologies<br /></h2>
-                <p class="skills-intro" style="text-align:left; max-width: 520px;">Explore the technologies I utilize to
-                    drive innovation in my projects.</p>
-                <a href="#connect" class="cta-button primary" style="width:max-content;">Connect with me!</a>
-            </div>
-            <div class="skills-right">
-                <div class="skills-tags">
+        <div class="container skills-3d-layout">
+            <div class="skills-text-content">
+                <h2 class="section-title">my technical stack includes various tools <br />and technologies<br /></h2>
+                <p class="skills-intro">Explore the technologies I utilize to drive innovation in my projects.</p>
+                <div class="skills-tags-static">
                     <span class="badge">Backend</span>
                     <span class="badge">AI/ML</span>
                     <span class="badge">Deployment</span>
                     <span class="badge">Gen AI</span>
-                    <span class="badge">Android - App Development</span>
+                    <span class="badge">Android App Development</span>
                 </div>
-                <div class="skills-grid flat">
-                    <div class="skill-item"><img
-                            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg"
-                            alt="Python"></div>
-                    <div class="skill-item"><img
-                            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg"
-                            alt="PyTorch"></div>
-                    <div class="skill-item"><img
-                            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" alt="Java">
-                    </div>
-                    <div class="skill-item"><img src="assets/images/C.png" alt="C"></div>
-                    <div class="skill-item"><img
-                            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg"
-                            alt="C++"></div>
-                    <div class="skill-item"><img class="logo-github" src="assets/images/github.png" alt="GitHub"></div>
-                    <div class="skill-item"><img
-                            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg"
-                            alt="Node.js"></div>
-                    <div class="skill-item"><img
-                            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg"
-                            alt="HTML5"></div>
-                    <div class="skill-item"><img
-                            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3">
-                    </div>
-                    <div class="skill-item"><img
-                            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg"
-                            alt="Flutter"></div>
-                    <div class="skill-item"><img
-                            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kotlin/kotlin-original.svg"
-                            alt="Kotlin"></div>
-                    <div class="skill-item"><img
-                            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg" alt="Dart">
-                    </div>
-                    <div class="skill-item"><img
-                            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg"
-                            alt="MySQL"></div>
-                    <div class="skill-item"><img
-                            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg"
-                            alt="MongoDB"></div>
+                <div class="skills-cta-container">
+                    <a href="#connect" class="cta-button primary">Connect with me!</a>
+                    <a href="https://drive.google.com/file/d/1mG9J3lBp2jYv5DaPWU1qfTot7VYhEPGv/view?usp=sharing"
+                        target="_blank" class="cta-button secondary">Download Resume</a>
                 </div>
+            </div>
+
+            <div class="skills-network-container">
+                <canvas id="skillsNetwork"></canvas>
             </div>
         </div>
     </section>
@@ -310,6 +274,11 @@
                             <div class="experience-skills">
                                 <span class="exp-skill-badge">Web Development</span>
                                 <span class="exp-skill-badge">Tech Management</span>
+                            </div>
+
+                            <div style="text-align: center; margin-top: 3rem;">
+                                <a href="https://drive.google.com/file/d/1mG9J3lBp2jYv5DaPWU1qfTot7VYhEPGv/view?usp=sharing"
+                                    target="_blank" class="cta-button secondary">Download Resume</a>
                             </div>
                         </div>
                     </div>
@@ -651,6 +620,7 @@
         </div>
     </footer>
 
+    <script src="assets/js/skills-network.js"></script>
     <script src="script.js"></script>
 </body>
 

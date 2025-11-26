@@ -45,6 +45,9 @@ class SkillsNetwork {
         this.nodes.forEach(node => {
             if (node.icon) {
                 const img = new Image();
+                img.crossOrigin = "Anonymous"; // Try to prevent CORS issues
+                img.onload = () => { node.loaded = true; };
+                img.onerror = () => { node.loaded = false; node.error = true; };
                 img.src = node.icon;
                 node.img = img;
             }
@@ -231,9 +234,16 @@ class SkillsNetwork {
             this.ctx.stroke();
 
             // Icon
-            if (node.img && node.img.complete) {
+            if (node.img && node.loaded && node.img.naturalWidth > 0) {
                 const size = node.radius * 1.2;
                 this.ctx.drawImage(node.img, node.x - size / 2, node.y - size / 2, size, size);
+            } else if (node.error || !node.img) {
+                // Fallback: draw first letter of label
+                this.ctx.fillStyle = 'rgba(54, 188, 247, 0.8)';
+                this.ctx.font = `${node.radius * 0.8}px Arial`;
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillText(node.label.charAt(0), node.x, node.y);
             }
         });
     }

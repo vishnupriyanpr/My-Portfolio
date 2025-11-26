@@ -1937,25 +1937,25 @@ body::after {
     }
 
     .hero {
-        padding: 150px 2.5rem 8rem !important;
+        padding: 120px 1.5rem 6rem !important;
         /* Enforced reduced breadth and extended length */
-        min-height: 110vh !important;
+        min-height: 100vh !important;
         display: flex !important;
         flex-direction: column !important;
         justify-content: center !important;
     }
 
     .profile-img {
-        width: 80px !important;
-        height: 80px !important;
+        width: 70px !important;
+        height: 70px !important;
     }
 
     .hero-title {
-        font-size: 1.2rem !important;
+        font-size: 1rem !important;
     }
 
     .section-title {
-        font-size: 1.2rem !important;
+        font-size: 1.1rem !important;
     }
 
     .navbar {
@@ -1982,23 +1982,23 @@ body::after {
     }
 
     .about .profile-info .name {
-        font-size: 1.5rem !important;
+        font-size: 1.3rem !important;
     }
 
     .about .profile-info .title {
-        font-size: 1rem !important;
+        font-size: 0.9rem !important;
     }
 
     .about .hero-subtitle {
-        font-size: 0.85rem !important;
+        font-size: 0.8rem !important;
     }
 
     .hero-subtitle {
-        font-size: 0.85rem !important;
+        font-size: 0.8rem !important;
     }
 
     .sliding-item {
-        font-size: 0.9rem !important;
+        font-size: 0.85rem !important;
         height: 1.2rem !important;
     }
 

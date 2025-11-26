@@ -119,9 +119,9 @@ body::after {
     position: absolute;
     width: 2px;
     height: 2px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.4) 70%, transparent 100%);
-    border-radius: 50%;
-    box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.8);
+    clip-path: polygon(50% 0%, 65% 40%, 100% 50%, 65% 60%, 50% 100%, 35% 60%, 0% 50%, 35% 40%);
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.4);
     animation: particleFloat 20s linear infinite;
     transform-origin: center;
     bottom: -10px;
@@ -130,35 +130,35 @@ body::after {
 }
 
 .particle:nth-child(odd) {
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.3) 70%, transparent 100%);
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-    animation: particleFloat 25s linear infinite, particleTwinkle 3s ease-in-out infinite;
-    width: 1.5px;
-    height: 1.5px;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    animation: particleFloat 25s linear infinite, particleTwinkle 4s ease-in-out infinite;
+    width: 3px;
+    height: 3px;
 }
 
 .particle:nth-child(3n) {
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.2) 70%, transparent 100%);
-    box-shadow: 0 0 4px rgba(255, 255, 255, 0.4);
-    animation: particleFloat 30s linear infinite, particlePulse 4s ease-in-out infinite;
-    width: 1px;
-    height: 1px;
+    background: rgba(200, 230, 255, 0.8);
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+    animation: particleFloat 30s linear infinite, particlePulse 5s ease-in-out infinite;
+    width: 4px;
+    height: 4px;
 }
 
 .particle:nth-child(4n) {
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.1) 70%, transparent 100%);
-    box-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
-    animation: particleFloat 35s linear infinite, particleGlow 5s ease-in-out infinite;
-    width: 2.5px;
-    height: 2.5px;
+    background: rgba(255, 250, 200, 0.8);
+    box-shadow: 0 0 7px rgba(255, 255, 255, 0.3);
+    animation: particleFloat 35s linear infinite, particleGlow 6s ease-in-out infinite;
+    width: 5px;
+    height: 5px;
 }
 
 .particle:nth-child(5n) {
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.1) 70%, transparent 100%);
-    box-shadow: 0 0 2px rgba(255, 255, 255, 0.2);
-    animation: particleFloat 40s linear infinite, particleShimmer 6s ease-in-out infinite;
-    width: 0.8px;
-    height: 0.8px;
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
+    animation: particleFloat 40s linear infinite, particleShimmer 7s ease-in-out infinite;
+    width: 2px;
+    height: 2px;
 }
 
 @keyframes particleFloat {
@@ -168,29 +168,29 @@ body::after {
     }
 
     10% {
-        opacity: 1;
-        transform: translateY(-10vh) translateX(10px) scale(1);
+        opacity: 0.8;
+        transform: translateY(-10vh) translateX(10px) scale(0.8);
     }
 
     30% {
-        transform: translateY(-30vh) translateX(30px) scale(1.1);
+        transform: translateY(-30vh) translateX(30px) scale(0.9);
     }
 
     50% {
-        transform: translateY(-50vh) translateX(50px) scale(1.2);
+        transform: translateY(-50vh) translateX(50px) scale(1);
     }
 
     70% {
-        transform: translateY(-70vh) translateX(70px) scale(1.1);
+        transform: translateY(-70vh) translateX(70px) scale(0.9);
     }
 
     90% {
-        opacity: 1;
-        transform: translateY(-90vh) translateX(90px) scale(1);
+        opacity: 0.8;
+        transform: translateY(-90vh) translateX(90px) scale(0.8);
     }
 
     100% {
-        transform: translateY(-110vh) translateX(100px) scale(0);
+        transform: translateY(-100vh) translateX(100px) scale(0);
         opacity: 0;
     }
 }
@@ -199,13 +199,13 @@ body::after {
 
     0%,
     100% {
-        opacity: 0.3;
-        transform: scale(1);
+        opacity: 0.4;
+        transform: scale(0.9);
     }
 
     50% {
-        opacity: 1;
-        transform: scale(1.2);
+        opacity: 0.8;
+        transform: scale(1.1);
     }
 }
 
@@ -213,13 +213,13 @@ body::after {
 
     0%,
     100% {
-        opacity: 0.4;
-        box-shadow: 0 0 4px rgba(255, 255, 255, 0.4);
+        opacity: 0.5;
+        box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
     }
 
     50% {
-        opacity: 0.8;
-        box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+        opacity: 0.9;
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
     }
 }
 
@@ -227,13 +227,13 @@ body::after {
 
     0%,
     100% {
-        opacity: 0.2;
+        opacity: 0.3;
         filter: brightness(1);
     }
 
     50% {
-        opacity: 0.6;
-        filter: brightness(1.5);
+        opacity: 0.7;
+        filter: brightness(1.3);
     }
 }
 

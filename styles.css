@@ -303,6 +303,52 @@ body::after {
     90% {
         opacity: 0.5;
     }
+
+    90% {
+        opacity: 0.5;
+    }
+}
+
+/* Shooting Stars */
+.shooting-star {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    background: #36BCF7;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(54, 188, 247, 0.1), 0 0 0 8px rgba(54, 188, 247, 0.1), 0 0 20px rgba(54, 188, 247, 1);
+    animation: shooting 3s linear infinite;
+    opacity: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.shooting-star::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 300px;
+    height: 1px;
+    background: linear-gradient(90deg, #36BCF7, transparent);
+}
+
+@keyframes shooting {
+    0% {
+        transform: rotate(315deg) translateX(0);
+        opacity: 1;
+    }
+
+    70% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: rotate(315deg) translateX(-1000px);
+        opacity: 0;
+    }
 }
 
 /* Floating Rocket */

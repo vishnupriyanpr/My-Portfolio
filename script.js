@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Create dynamic particles
     createParticles();
+    createShootingStars();
 
     // Particle creation function
     function createParticles() {
@@ -43,9 +44,37 @@ document.addEventListener('DOMContentLoaded', function () {
             // Start some particles mid-cycle so stars are visible immediately
             particle.style.animationDelay = (-Math.random() * duration).toFixed(2) + 's';
             particle.style.opacity = Math.random() * 0.5 + 0.3;
+
             particlesContainer.appendChild(particle);
         }
     }
+
+    function createShootingStars() {
+        const container = document.body;
+
+        setInterval(() => {
+            if (document.hidden) return; // Don't animate if tab is hidden
+
+            const star = document.createElement('div');
+            star.className = 'shooting-star';
+
+            // Random position
+            star.style.top = (Math.random() * 50) + '%'; // Top half of screen
+            star.style.left = (Math.random() * 100) + '%';
+
+            // Random delay and duration
+            star.style.animationDuration = (Math.random() * 1 + 1) + 's';
+            star.style.animationDelay = Math.random() * 2 + 's';
+
+            container.appendChild(star);
+
+            // Cleanup
+            setTimeout(() => {
+                star.remove();
+            }, 4000);
+        }, 3000 + Math.random() * 5000); // Random interval between 3-8 seconds
+    }
+
     // Smooth scrolling for navigation (only navbar/footer anchors)
     const navLinks = document.querySelectorAll('.nav-menu a[href^="#"], .footer-links a[href^="#"]');
 

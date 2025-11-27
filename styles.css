@@ -1126,6 +1126,19 @@ body::after {
     gap: 0.8rem;
 }
 
+.skills-network-container {
+    width: 100%;
+    min-height: 500px;
+    position: relative;
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    .skills-network-container {
+        min-height: 300px;
+    }
+}
+
 /* Skills rectangular style */
 .skill-item {
     background: rgba(200, 200, 200, 0.06);
@@ -2031,12 +2044,13 @@ body::after {
     }
 
     /* Skills Network Visibility */
+    /* Skills Network Visibility */
     .skills-network-container {
-        height: 300px !important;
-        width: 100% !important;
-        display: flex !important;
-        opacity: 1 !important;
-        visibility: visible !important;
+        min-height: 300px;
+        width: 100%;
+        display: block;
+        opacity: 1;
+        visibility: visible;
     }
 
     /* Icon Square Minimization */
@@ -2047,6 +2061,34 @@ body::after {
 
     .icon-square i {
         font-size: 1.2rem !important;
+    }
+
+    /* Mobile Skills Optimization */
+    .skills-text-content {
+        padding: 1rem !important;
+        text-align: left !important;
+    }
+
+    .skills-text-content .section-title {
+        font-size: 1.8rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    .skills-text-content .skills-intro {
+        font-size: 0.9rem !important;
+        margin-bottom: 1rem !important;
+        text-align: left !important;
+    }
+
+    .skills-tags-static {
+        margin-bottom: 1.5rem !important;
+        gap: 0.3rem !important;
+        justify-content: flex-start !important;
+    }
+
+    .skills-3d-layout {
+        flex-direction: column !important;
+        gap: 1rem !important;
     }
 }
 
@@ -3076,6 +3118,7 @@ body::after {
     -webkit-background-clip: text !important;
     background-clip: text !important;
     color: transparent !important;
+    text-align: left !important;
 }
 
 .skills-text-content .skills-intro {
@@ -3098,8 +3141,10 @@ body::after {
     overflow-x: auto;
     /* Allow scroll if needed on very small screens */
     scrollbar-width: none;
-    /* Hide scrollbar */
 }
+
+/* Hide scrollbar */
+
 
 .skills-tags-static::-webkit-scrollbar {
     display: none;

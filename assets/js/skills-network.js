@@ -20,11 +20,24 @@ class SkillsNetwork {
     }
 
     init() {
-        this.resize();
-        window.addEventListener('resize', () => this.resize());
+        // Use ResizeObserver for robust size tracking
+        const parent = this.canvas.parentElement;
+        if (parent) {
+            const resizeObserver = new ResizeObserver(() => this.resize());
+            resizeObserver.observe(parent);
+        } else {
+            window.addEventListener('resize', () => this.resize());
+        }
 
-        // Force a resize after a short delay to handle mobile layout shifts
-        setTimeout(() => this.resize(), 500);
+        // Initial resize
+        this.resize();
+
+        // Force resize on window load to ensure layout is complete
+        if (document.readyState === 'complete') {
+            this.resize();
+        } else {
+            window.addEventListener('load', () => this.resize());
+        }
 
         // Create Nodes
         this.skills.forEach(skill => {
@@ -98,7 +111,9 @@ class SkillsNetwork {
         if (parent) {
             const rect = parent.getBoundingClientRect();
             this.width = rect.width || parent.offsetWidth || window.innerWidth;
-            this.height = rect.height || parent.offsetHeight || (this.isMobile ? 300 : 500);
+            // Force minimum height if parent reports 0 or small value
+            const minHeight = this.isMobile ? 300 : 500;
+            this.height = Math.max(rect.height || parent.offsetHeight || 0, minHeight);
         } else {
             this.width = window.innerWidth;
             this.height = this.isMobile ? 300 : 500;

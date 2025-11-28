@@ -149,7 +149,16 @@ class SkillsNetwork {
                 const dx = b.x - a.x;
                 const dy = b.y - a.y;
                 const distSq = dx * dx + dy * dy;
-                if (distSq === 0) continue;
+                if (distSq === 0) {
+                    // Safety: if nodes are exactly on top of each other (e.g. 0 init size), push them apart randomly
+                    const angle = Math.random() * Math.PI * 2;
+                    const force = 1;
+                    a.vx -= Math.cos(angle) * force;
+                    a.vy -= Math.sin(angle) * force;
+                    b.vx += Math.cos(angle) * force;
+                    b.vy += Math.sin(angle) * force;
+                    continue;
+                }
 
                 const dist = Math.sqrt(distSq);
                 const force = this.repulsion * 10 / distSq;
@@ -223,7 +232,7 @@ class SkillsNetwork {
                 this.ctx.strokeStyle = 'rgba(54, 188, 247, 0.6)';
                 this.ctx.lineWidth = 2;
             } else {
-                this.ctx.strokeStyle = 'rgba(54, 188, 247, 0.15)';
+                this.ctx.strokeStyle = 'rgba(54, 188, 247, 0.35)';
                 this.ctx.lineWidth = 1;
             }
             this.ctx.stroke();
@@ -252,8 +261,8 @@ class SkillsNetwork {
             if (node.img && node.loaded && node.img.naturalWidth > 0) {
                 const size = node.radius * 1.2;
                 this.ctx.drawImage(node.img, node.x - size / 2, node.y - size / 2, size, size);
-            } else if (node.error || !node.img) {
-                // Fallback: draw first letter of label
+            } else {
+                // Fallback: draw first letter of label if image is loading or failed or missing
                 this.ctx.fillStyle = 'rgba(54, 188, 247, 0.8)';
                 this.ctx.font = `${node.radius * 0.8}px Arial`;
                 this.ctx.textAlign = 'center';
@@ -264,6 +273,10 @@ class SkillsNetwork {
     }
 
     animate() {
+        if (this.width === 0 || this.height === 0) {
+            requestAnimationFrame(() => this.animate());
+            return;
+        }
         this.updatePhysics();
         this.draw();
         requestAnimationFrame(() => this.animate());

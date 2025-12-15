@@ -785,6 +785,58 @@ window.addEventListener('load', () => {
     }
 });
 
+// --- Navbar Text Roll Animation ---
+function initNavAnimations() {
+    const links = document.querySelectorAll('.nav-menu a');
+    const STAGGER = 0.035; // Seconds
+
+    links.forEach(link => {
+        const text = link.textContent.trim();
+        link.textContent = ''; // Clear existing text
+
+        // Create Container
+        const container = document.createElement('span');
+        container.className = 'nav-roll-item';
+
+        // Create Top and Bottom layers
+        const topLayer = document.createElement('span');
+        topLayer.className = 'nav-roll-text top';
+
+        const bottomLayer = document.createElement('span');
+        bottomLayer.className = 'nav-roll-text bottom';
+
+        // Split text and apply delays
+        const chars = text.split('');
+        const centerIndex = (chars.length - 1) / 2;
+
+        chars.forEach((char, i) => {
+            // Calculate center-out delay
+            const delay = STAGGER * Math.abs(i - centerIndex);
+
+            // Create Top Char
+            const spanTop = document.createElement('span');
+            spanTop.className = 'char';
+            spanTop.textContent = char === ' ' ? '\u00A0' : char; // Preserve spaces
+            spanTop.style.transitionDelay = `${delay}s`;
+            topLayer.appendChild(spanTop);
+
+            // Create Bottom Char
+            const spanBottom = document.createElement('span');
+            spanBottom.className = 'char';
+            spanBottom.textContent = char === ' ' ? '\u00A0' : char;
+            spanBottom.style.transitionDelay = `${delay}s`;
+            bottomLayer.appendChild(spanBottom);
+        });
+
+        container.appendChild(topLayer);
+        container.appendChild(bottomLayer);
+        link.appendChild(container);
+    });
+}
+
+// Call animation init
+document.addEventListener('DOMContentLoaded', initNavAnimations);
+
 // --- Gallery (safe, self-contained) ---
 function renderGallery() {
     const grid = document.getElementById('galleryGrid');
@@ -801,7 +853,7 @@ function renderGallery() {
         'IMG-20250827-WA0009.jpg',
         'IMG-20250827-WA0010.jpg',
         'IMG-20250827-WA0011.jpg',
-        'WhatsApp%20Image%202025-08-07%20at%2009.17.59_fe317955.jpg'
+        'WhatsApp Image 2025-08-07 at 09.17.59_fe317955.jpg'
     ];
 
     // Move the last image to the front to place it on the left side

@@ -5053,3 +5053,88 @@ body::after {
         transform: translateY(-6.0rem);
     }
 }
+
+/* Increase GitHub logo size in project badge */
+.project-badge i {
+    font-size: 1.4rem;
+    margin-right: 8px;
+    /* Add some spacing between icon and text */
+    vertical-align: middle;
+}
+
+/* --- Text Roll Animation for Navbar --- */
+.nav-roll-item {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    line-height: normal;
+    /* Override line-height for precise calc */
+}
+
+/* Ensure the link container behaves correctly */
+.nav-menu a {
+    /* Existing layout styles preservation */
+    display: flex;
+    /* Kept from before */
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    /* Necessary for the effect */
+}
+
+/* Override existing active/hover styles that might conflict */
+.nav-menu a.active::after,
+.nav-menu a::after {
+    /* Hide the underline effect if we are replacing it with text roll, 
+       OR keep it? The prompt implies "unique animation... whenever cursor hovered". 
+       Usually this replaces the standard hover. Let's hide the underline for cleaner look. */
+    display: none !important;
+}
+
+.nav-roll-text {
+    display: block;
+    position: relative;
+}
+
+.nav-roll-text.top {
+    /* Occupies the natural space */
+}
+
+.nav-roll-text.bottom {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.nav-roll-text .char {
+    display: inline-block;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+}
+
+/* Initial States */
+.nav-roll-text.top .char {
+    transform: translateY(0);
+}
+
+.nav-roll-text.bottom .char {
+    transform: translateY(100%);
+}
+
+/* Hover States (triggered on parent link hover) */
+.nav-menu a:hover .nav-roll-text.top .char {
+    transform: translateY(-100%);
+}
+
+.nav-menu a:hover .nav-roll-text.bottom .char {
+    transform: translateY(0);
+}
+
+/* Active State Persistence (Optional) - Keep 'active' links rolled? 
+   Or just keep the color? The JS sets 'active' class. 
+   Let's ensure the color is maintained for active items via the text spans */
+.nav-menu a.active .char {
+    color: var(--primary-color);
+}

@@ -54,20 +54,37 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 3000 + Math.random() * 5000); // Random interval between 3-8 seconds
     }
 
-    // Smooth scrolling for navigation (only navbar/footer anchors)
+    // Initialize Lenis for smooth scrolling
+    const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        direction: 'vertical',
+        gestureDirection: 'vertical',
+        smooth: true,
+        mouseMultiplier: 1,
+        smoothTouch: false,
+        touchMultiplier: 2,
+    });
+
+    function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // Smooth scrolling for navigation (using Lenis)
     const navLinks = document.querySelectorAll('.nav-menu a[href^="#"], .footer-links a[href^="#"]');
 
     navLinks.forEach(link => {
         link.addEventListener('click', function (e) {
             e.preventDefault();
             const targetId = this.getAttribute('href');
+            if (targetId === '#' || targetId === '') return;
             const targetSection = document.querySelector(targetId);
 
             if (targetSection) {
-                const offsetTop = targetSection.offsetTop - 80; // Account for fixed navbar
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: 'smooth'
+                lenis.scrollTo(targetSection, {
+                    offset: -80
                 });
             }
         });
@@ -291,180 +308,530 @@ document.addEventListener('DOMContentLoaded', function () {
     const timelineBeam = document.getElementById('timelineBeam');
 
     if (timelineWrapper && timelineBeam) {
-        window.addEventListener('scroll', () => {
-            // Disable animation on mobile to prevent stuttering
-            if (window.innerWidth < 768) {
-                timelineBeam.style.opacity = '0'; // Hide beam on mobile
-                return;
-            }
+        let isTicking = false;
 
+        // Ensure beam is hidden on mobile initially
+        const checkMobile = () => {
+            if (window.innerWidth < 768) {
+                timelineBeam.style.display = 'none';
+            } else {
+                timelineBeam.style.display = 'block';
+            }
+        };
+        window.addEventListener('resize', checkMobile);
+        checkMobile();
+
+        window.addEventListener('scroll', () => {
+            if (window.innerWidth < 768) return; // distinct check for scroll listener
+
+            if (!isTicking) {
+                window.requestAnimationFrame(() => {
+                    updateTimelineBeam();
+                    isTicking = false;
+                });
+                isTicking = true;
+            }
+        }, { passive: true });
+
+        function updateTimelineBeam() {
             const rect = timelineWrapper.getBoundingClientRect();
             const viewportHeight = window.innerHeight;
 
-            // Calculate scroll progress within the timeline section
-            // Start slightly before the section enters (rect.top < viewportHeight)
-            // End when the section leaves (rect.bottom > 0)
-
+            // Only animate if in view
             if (rect.top < viewportHeight && rect.bottom > 0) {
-                // Determine beam position relative to the track
-                // We want the beam to follow the center of the viewport or just below the header
+                // Calculate position relative to viewport center
+                // But clamped to the timeline height
                 const relativeY = Math.min(Math.max(0, (viewportHeight / 2) - rect.top), rect.height - 100);
 
-                timelineBeam.style.top = `${relativeY}px`;
+                // Use transform for performance (hardware acceleration)
+                timelineBeam.style.transform = `translateY(${relativeY}px)`;
                 timelineBeam.style.opacity = '1';
             } else {
                 timelineBeam.style.opacity = '0';
             }
-        });
+        }
     }
 });
 
 async function renderPinnedProjects() {
-    const grid = document.getElementById('projectsGrid');
-    if (!grid) return;
+    const wheelEl = document.getElementById('galleryWheel');
+    const trackEl = document.getElementById('galleryTrack');
+    const stageEl = document.getElementById('galleryStage');
 
-    const fallback = [
-        { repo: 'Terminal-pal ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/terminal-pal', description: 'AI Terminal Pal: multi-AI terminal assistant with smart project analysis (Online + Offline LLMs powered).' },
-        { repo: 'Oxocare ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/oxocare', description: 'MedDoc Scanner: OCR + secure storage with intuitive dashboard, and Global Medical DataBase (Android App - Kotlin).' },
-        { repo: 'Verve ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/verve', description: 'AI-powered nutritional advisor for chronic disease management (Android App - Flutter).' },
-        { repo: 'UltraCodeAI ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/ultracodeai', description: 'AI-powered IntelliJ plugin: context-aware prompts and refactors (Online + Offline LLMs powered).' },
-        { repo: 'PrediChurn ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/PrediChurn', description: 'End-to-end churn prediction ML pipeline with feature engineering and tuning (Churn - Prediction).' },
-        { repo: 'PharmaScan ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/PharmaScan', description: 'Medicine strip scanner powered by AI for quick identification (Android App - Kotlin).' },
-        { repo: 'Vishnu-cli-npx ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/Vishnu-cli-npx', description: 'Personal, zero-install CLI card — run npx vishnupriyan to view profile, socials, and projects in your terminal.' },
-        { repo: 'Cardiac-Care ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/Cardiac-Care', description: 'AI-powered heart health suite: ECG analysis, chatbot, diet planner, report summarizer, patient records, and ambulance booking.' },
+    if (!wheelEl || !trackEl || !stageEl) return;
+
+    // Project data
+    const projects = [
+        {
+            id: 1,
+            title: 'Terminal-pal',
+            category: 'AI/CLI',
+            link: 'https://github.com/vishnupriyanpr/terminal-pal',
+            img: 'https://images.unsplash.com/photo-1629654297299-c8506221ca97?auto=format&fit=crop&w=400&q=80',
+            tech: ['python', 'ai'],
+            description: 'A powerful AI-driven CLI tool that brings terminal assistance to the next level.'
+        },
+        {
+            id: 2,
+            title: 'Oxocare',
+            category: 'Android',
+            link: 'https://github.com/vishnupriyanpr/oxocare',
+            img: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80', // ID: xDNwySMfR5I
+            tech: ['kotlin', 'ai'],
+            description: 'Smart healthcare companion app for tracking vitals and managing medical records.'
+        },
+        {
+            id: 3,
+            title: 'Verve',
+            category: 'Flutter',
+            link: 'https://github.com/vishnupriyanpr/verve',
+            img: 'https://images.unsplash.com/photo-1490818387583-1baba5e638af?auto=format&fit=crop&w=400&q=80',
+            tech: ['flutter', 'ai'],
+            description: 'Modern lifestyle and fitness application built for seamless user experience.'
+        },
+        {
+            id: 5,
+            title: 'PrediChurn',
+            category: 'ML',
+            link: 'https://github.com/vishnupriyanpr/PrediChurn',
+            img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=400&q=80',
+            tech: ['python', 'pytorch'],
+            description: 'Machine learning model designed to predict customer churn with high accuracy.'
+        },
+        {
+            id: 4,
+            title: 'UltraCodeAI',
+            category: 'Plugin',
+            link: 'https://github.com/vishnupriyanpr/ultracodeai',
+            img: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=400&q=80',
+            tech: ['java', 'ai'],
+            description: 'Intelligent IDE plugin that enhances coding efficiency with AI suggestions.'
+        },
+        {
+            id: 7,
+            title: 'Vishnu-cli-npx',
+            category: 'CLI',
+            link: 'https://github.com/vishnupriyanpr/Vishnu-cli-npx',
+            img: 'https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?auto=format&fit=crop&w=400&q=80',
+            tech: ['nodejs'],
+            description: 'My personal CLI card to connect and share portfolio details instantly.'
+        },
+        {
+            id: 8,
+            title: 'Cardiac-Care',
+            category: 'Healthcare',
+            link: 'https://github.com/vishnupriyanpr/Cardiac-Care',
+            img: 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=400&q=80',
+            tech: ['python', 'pytorch', 'ai'],
+            description: 'AI-powered system for early detection and monitoring of cardiac health issues.'
+        },
+        {
+            id: 6,
+            title: 'PharmaScan',
+            category: 'Android',
+            link: 'https://github.com/vishnupriyanpr/PharmaScan',
+            img: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=400&q=80',
+            tech: ['kotlin', 'ai'],
+            description: 'Android application for scanning and identifying pharmaceutical products.'
+        }
     ];
 
-    // Render fallback immediately so Projects never appears empty
-    grid.innerHTML = fallback.map(r => projectCardHTML(r)).join('');
-    // Bind click for the immediately rendered cards
-    grid.querySelectorAll('.project-card').forEach(card => {
-        const url = card.getAttribute('data-github');
-        if (url) card.addEventListener('click', () => window.open(url, '_blank'));
-    });
-
-    let repos = [];
-    try {
-        const res = await fetch('https://gh-pinned-repos.egoist.dev/?username=vishnupriyanpr', { cache: 'no-store' });
-        if (res.ok) {
-            const data = await res.json();
-            repos = (data || []).slice(0, 6).map(d => ({
-                repo: d.repo,
-                owner: d.owner,
-                link: `https://github.com/${d.owner}/${d.repo}`,
-                description: d.description || '',
-                language: d.language || '',
-                stars: d.stars || 0,
-            }));
-            // Merge with fallback to ensure at least six projects remain visible
-            const requested = [
-                { repo: 'Vishnu-cli-npx ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/Vishnu-cli-npx', description: 'Personal, zero-install CLI card — run npx vishnupriyan to view profile, socials, and projects in your terminal.' },
-                { repo: 'Cardiac-Care ', owner: 'vishnupriyanpr', link: 'https://github.com/vishnupriyanpr/Cardiac-Care', description: 'AI-powered heart health suite: ECG analysis, chatbot, diet planner, report summarizer, patient records, and ambulance booking.' }
-            ];
-            const seen = new Set(repos.map(r => r.link));
-            // Backfill from fallback until we have 6
-            fallback.forEach(f => {
-                if (repos.length < 6 && !seen.has(f.link)) {
-                    repos.push(f);
-                    seen.add(f.link);
-                }
-            });
-            // Append the two requested projects as an extra row
-            requested.forEach(p => { if (!seen.has(p.link)) repos.push(p); });
-        }
-    } catch (e) {
-        // ignore and use fallback
-    }
-
-    if (!repos.length) return; // keep fallback content
-
-    // Replace with merged live+fallback data
-    grid.innerHTML = repos.map(r => projectCardHTML(r)).join('');
-
-    grid.querySelectorAll('.project-card').forEach(card => {
-        const url = card.getAttribute('data-github');
-        if (url) card.addEventListener('click', () => window.open(url, '_blank'));
-
-        // Spotlight effect logic
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            card.style.setProperty('--mouse-x', `${x}px`);
-            card.style.setProperty('--mouse-y', `${y}px`);
-        });
+    // Initialize the gallery with Sticky Proxy pattern
+    window.radialGallery = new StickyProxyGallery({
+        trackEl,
+        stageEl,
+        wheelEl,
+        projects,
+        baseRadius: 450,
+        mobileRadius: 200,
+        visiblePercentage: 50, // 50% of circle visible
+        lerpFactor: 0.08 // Smooth inertia - lower = more smoothing
     });
 }
 
-function projectCardHTML(r) {
-    // Add logos for specific projects
-    const isTerminalPal = r.repo.toLowerCase().includes('terminal-pal');
-    const isUltraCodeAI = r.repo.toLowerCase().includes('ultracodeai');
-    const isOxocare = r.repo.toLowerCase().includes('oxocare');
-    const isPharmaScan = r.repo.toLowerCase().includes('pharmascan');
-    const isVerve = r.repo.toLowerCase().includes('verve');
-    const isPrediChurn = r.repo.toLowerCase().includes('predichurn');
-    const isVishnuCLI = r.repo.toLowerCase().includes('vishnu-cli-npx');
-    const isCardiacCare = r.repo.toLowerCase().includes('cardiac-care');
-    let logos = '';
+// Tech icon mapping
+const techIcons = {
+    python: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg',
+    pytorch: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg',
+    kotlin: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kotlin/kotlin-original.svg',
+    flutter: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg',
+    java: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg',
+    nodejs: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg',
+    ai: null
+};
 
-    if (isTerminalPal) {
-        logos = `
-            <div class="project-lang-badge python-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" /></div>
-            <div class="project-lang-badge ai-badge"><i class="fas fa-brain"></i></div>
-        `;
-    } else if (isUltraCodeAI) {
-        logos = `
-            <div class="project-lang-badge java-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" alt="Java" /></div>
-            <div class="project-lang-badge ai-badge"><i class="fas fa-brain"></i></div>
-        `;
-    } else if (isOxocare) {
-        logos = `
-            <div class="project-lang-badge kotlin-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kotlin/kotlin-original.svg" alt="Kotlin" /></div>
-            <div class="project-lang-badge sql-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="SQL" /></div>
-            <div class="project-lang-badge ocr-badge"><i class="fas fa-eye"></i></div>
-        `;
-    } else if (isPharmaScan) {
-        logos = `
-            <div class="project-lang-badge kotlin-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kotlin/kotlin-original.svg" alt="Kotlin" /></div>
-            <div class="project-lang-badge ai-badge"><i class="fas fa-brain"></i></div>
-        `;
-    } else if (isVerve) {
-        logos = `
-            <div class="project-lang-badge flutter-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" alt="Flutter" /></div>
-            <div class="project-lang-badge dart-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg" alt="Dart" /></div>
-            <div class="project-lang-badge ai-badge"><i class="fas fa-brain"></i></div>
-        `;
-    } else if (isPrediChurn) {
-        logos = `
-            <div class="project-lang-badge python-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" /></div>
-            <div class="project-lang-badge pytorch-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg" alt="PyTorch" /></div>
-            <div class="project-lang-badge ai-badge"><i class="fas fa-brain"></i></div>
-        `;
-    } else if (isCardiacCare) {
-        logos = `
-            <div class="project-lang-badge python-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" /></div>
-            <div class="project-lang-badge pytorch-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg" alt="PyTorch" /></div>
-            <div class="project-lang-badge ai-badge"><i class="fas fa-brain"></i></div>
-        `;
-    } else if (isVishnuCLI) {
-        logos = `
-            <div class="project-lang-badge nodejs-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js" /></div>
-            <div class="project-lang-badge npm-badge"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/npm/npm-original-wordmark.svg" alt="npm" /></div>
-        `;
+/**
+ * StickyProxyGallery - Pure Vanilla JS Implementation
+ * 
+ * Uses the "Sticky Proxy" pattern:
+ * - .gallery-track: Tall container (400vh) defines scroll distance
+ * - .gallery-stage: position:sticky keeps viewport locked while scrolling
+ * - .gallery-wheel: Rotates based on scroll progress
+ * 
+ * Uses requestAnimationFrame + LERP for smooth "antigravity" inertia effect.
+ * NO GSAP scrollTrigger pin needed - CSS sticky does the work!
+ */
+class StickyProxyGallery {
+    constructor(options) {
+        this.trackEl = options.trackEl;
+        this.stageEl = options.stageEl;
+        this.wheelEl = options.wheelEl;
+        this.projects = options.projects;
+
+        // Configuration
+        this.baseRadius = options.baseRadius || 450;
+        this.mobileRadius = options.mobileRadius || 200;
+        this.visiblePercentage = options.visiblePercentage || 50;
+        this.lerpFactor = options.lerpFactor || 0.05; // Smoothing factor (0-1)
+
+        // State
+        this.items = [];
+        this.hoveredIndex = null;
+        this.activeIndex = 0;
+        this.currentRotation = 0;      // Current interpolated rotation
+        this.targetRotation = 0;       // Target rotation from scroll
+        this.isAnimating = false;
+
+        // Calculated values
+        this.currentRadius = this.getResponsiveRadius();
+
+        this.init();
     }
 
-    // Add special class for projects with 3 badges positioning
-    const cardClass = (isVerve || isOxocare || isPrediChurn || isCardiacCare) ? 'project-card three-badges-project' : 'project-card';
+    getResponsiveRadius() {
+        return window.innerWidth < 768 ? this.mobileRadius : this.baseRadius;
+    }
 
-    return `
-    <div class="${cardClass}" data-github="${r.link}">
-        <div class="project-header">
-            <h3>${r.repo}</h3>
-            ${logos}
-        </div>
-        <p>${r.description || ''}</p>
-        <div class="project-badge"><i class="fab fa-github"></i><span>View project</span></div>
-    </div>`;
+    get circleDiameter() {
+        return this.currentRadius * 2;
+    }
+
+    get visibleDecimal() {
+        return Math.max(10, Math.min(100, this.visiblePercentage)) / 100;
+    }
+
+    get hiddenDecimal() {
+        return 1 - this.visibleDecimal;
+    }
+
+    init() {
+        this.createDescriptionContainer();
+        this.renderItems();
+        this.positionItems();
+        this.setupWheelDimensions();
+        this.bindEvents();
+        this.startAnimationLoop();
+
+        // Handle resize
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                this.currentRadius = this.getResponsiveRadius();
+                this.positionItems();
+                this.setupWheelDimensions();
+            }, 100);
+        });
+
+        // Entry animation (fade in items with stagger)
+        this.animateEntry();
+    }
+
+    createDescriptionContainer() {
+        this.descContainer = document.createElement('div');
+        this.descContainer.className = 'gallery-active-description';
+        this.descContainer.innerHTML = `
+            <div class="active-desc-content">
+                <h3 class="active-title"></h3>
+                <p class="active-text"></p>
+            </div>
+        `;
+        this.stageEl.appendChild(this.descContainer);
+        this.titleEl = this.descContainer.querySelector('.active-title');
+        this.textEl = this.descContainer.querySelector('.active-text');
+    }
+
+    renderItems() {
+        this.wheelEl.innerHTML = this.projects.map((project, index) => `
+            <li class="gallery-item" data-index="${index}">
+                <div class="gallery-item-inner" 
+                     role="button" 
+                     tabindex="0" 
+                     data-link="${project.link}"
+                     data-index="${index}">
+                    <div class="gallery-card">
+                        <div class="gallery-card-bg">
+                            <img src="${project.img}" alt="${project.title}" loading="lazy">
+                        </div>
+                        <div class="gallery-card-overlay"></div>
+                        <div class="gallery-card-content">
+                            <div>
+                                <span class="gallery-card-badge">${project.category}</span>
+                                <div class="gallery-card-arrow">
+                                    <i class="fas fa-arrow-up-right-from-square"></i>
+                                </div>
+                            </div>
+                            <div class="gallery-card-info">
+                                <h3 class="gallery-card-title">${project.title}</h3>
+                                <div class="gallery-card-accent"></div>
+                            </div>
+                            <div class="gallery-card-tech">
+                                ${this.renderTechIcons(project.tech)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        `).join('');
+
+        this.items = Array.from(this.wheelEl.querySelectorAll('.gallery-item'));
+    }
+
+    renderTechIcons(techs) {
+        if (!techs || !techs.length) return '';
+        return techs.slice(0, 3).map(tech => {
+            if (tech === 'ai') {
+                return `<div class="gallery-tech-icon"><i class="fas fa-brain"></i></div>`;
+            }
+            const icon = techIcons[tech];
+            return icon ? `<div class="gallery-tech-icon"><img src="${icon}" alt="${tech}"></div>` : '';
+        }).join('');
+    }
+
+    positionItems() {
+        const count = this.items.length;
+        if (!count) return;
+
+        this.items.forEach((item, index) => {
+            // Calculate angle for this item (distributed evenly around circle)
+            const angle = (index / count) * 2 * Math.PI;
+
+            // Calculate x,y position from center
+            const x = this.currentRadius * Math.cos(angle);
+            const y = this.currentRadius * Math.sin(angle);
+
+            // Rotation angle to make card face outward
+            const rotationAngle = (angle * 180) / Math.PI + 90;
+
+            // Apply transform
+            item.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, 0) rotate(${rotationAngle}deg)`;
+            item.style.zIndex = '10';
+        });
+    }
+
+    setupWheelDimensions() {
+        // Set wheel size
+        this.wheelEl.style.width = `${this.circleDiameter}px`;
+        this.wheelEl.style.height = `${this.circleDiameter}px`;
+
+        // Position wheel with center below viewport
+        // The wheel origin is at center, so we offset it downward
+        this.wheelEl.style.transform = `translateX(-50%) translateY(${this.circleDiameter * this.hiddenDecimal}px)`;
+    }
+
+    bindEvents() {
+        const inners = this.wheelEl.querySelectorAll('.gallery-item-inner');
+
+        inners.forEach((inner, index) => {
+            // Click handler
+            inner.addEventListener('click', () => {
+                const link = inner.dataset.link;
+                if (link) window.open(link, '_blank');
+            });
+
+            // Keyboard handler
+            inner.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    const link = inner.dataset.link;
+                    if (link) window.open(link, '_blank');
+                }
+            });
+
+            // Hover events
+            inner.addEventListener('mouseenter', () => this.setHovered(index));
+            inner.addEventListener('mouseleave', () => this.setHovered(null));
+            inner.addEventListener('focus', () => this.setHovered(index));
+            inner.addEventListener('blur', () => this.setHovered(null));
+        });
+    }
+
+    setHovered(index) {
+        this.hoveredIndex = index;
+        this.updateActiveState();
+    }
+
+    /**
+     * Calculate scroll progress within the track
+     * Returns 0 at start, 1 at end
+     */
+    getScrollProgress() {
+        const trackRect = this.trackEl.getBoundingClientRect();
+        const trackHeight = this.trackEl.offsetHeight;
+        const windowHeight = window.innerHeight;
+
+        // How far into the track have we scrolled?
+        // When track top is at viewport top, progress = 0
+        // When track bottom is at viewport bottom, progress = 1
+        const scrollableDistance = trackHeight - windowHeight;
+        const scrolled = -trackRect.top;
+
+        // Clamp between 0 and 1
+        return Math.max(0, Math.min(1, scrolled / scrollableDistance));
+    }
+
+    /**
+     * Linear Interpolation (Lerp)
+     * Smoothly moves from current to target
+     */
+    lerp(current, target, factor) {
+        return current + (target - current) * factor;
+    }
+
+    /**
+     * The Animation Loop - Heart of the smooth rotation
+     * Uses requestAnimationFrame for optimal performance
+     */
+    startAnimationLoop() {
+        const animate = () => {
+            // Get target rotation from scroll progress
+            const progress = this.getScrollProgress();
+            this.targetRotation = progress * 360; // Full rotation
+
+            // Smoothly interpolate current rotation towards target
+            this.currentRotation = this.lerp(
+                this.currentRotation,
+                this.targetRotation,
+                this.lerpFactor
+            );
+
+            // Apply rotation to wheel
+            this.wheelEl.style.transform = `translateX(-50%) translateY(${this.circleDiameter * this.hiddenDecimal}px) rotate(${this.currentRotation}deg)`;
+
+            // CALCULATE ACTIVE INDEX
+            const count = this.items.length;
+            const anglePerItem = 360 / count;
+
+            // Robust active index finding:
+            // Calculate effective angle of each item considering rotation
+            // We want to find the item closest to -90deg (Top) which is 270deg in 0-360 scale
+            let minDiff = Infinity;
+            let activeIdx = 0;
+
+            for (let i = 0; i < count; i++) {
+                // Effective angle for this item considering rotation
+                let effectiveAngle = ((i * anglePerItem + this.currentRotation) % 360 + 360) % 360;
+                // Distance to 270 deg (Top)
+                let diff = Math.abs(effectiveAngle - 270);
+                if (diff > 180) diff = 360 - diff; // Wrap around
+
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    activeIdx = i;
+                }
+            }
+
+            if (this.activeIndex !== activeIdx) {
+                this.activeIndex = activeIdx;
+                this.updateActiveState();
+            }
+
+            // Also update continuously if needed (e.g. for smooth transitions), but state-based is cleaner for text
+
+            // Continue the loop
+            requestAnimationFrame(animate);
+        };
+
+        // Start the loop
+        requestAnimationFrame(animate);
+    }
+
+    updateActiveState() {
+        const inners = this.wheelEl.querySelectorAll('.gallery-item-inner');
+        const project = this.projects[this.activeIndex];
+
+        // Update Description Text
+        if (this.titleEl && this.textEl && project) {
+            // Only update text regarding content
+            if (this.titleEl.innerText !== project.title) {
+                this.titleEl.innerText = project.title;
+                this.textEl.innerText = project.description || '';
+
+                // Trigger animation
+                this.descContainer.classList.remove('fade-in');
+                void this.descContainer.offsetWidth;
+                this.descContainer.classList.add('fade-in');
+            }
+        }
+
+        // Update visuals
+        inners.forEach((inner, i) => {
+            inner.classList.remove('is-active', 'is-blurred', 'is-hovered');
+            this.items[i].style.zIndex = '10';
+
+            if (this.hoveredIndex !== null) {
+                // Hover overrides active state styling
+                if (i === this.hoveredIndex) {
+                    inner.classList.add('is-hovered');
+                    this.items[i].style.zIndex = '100';
+                } else {
+                    inner.classList.add('is-blurred');
+                }
+            } else {
+                // No hover - highlight active item
+                if (i === this.activeIndex) {
+                    inner.classList.add('is-active');
+                    this.items[i].style.zIndex = '50';
+                } else {
+                    inner.classList.add('is-blurred');
+                }
+            }
+        });
+    }
+
+    /**
+     * Entry animation - cards scale in with stagger
+     */
+    animateEntry() {
+        // Check for reduced motion preference
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            this.items.forEach(item => {
+                item.style.opacity = '1';
+                item.style.transform = item.style.transform; // Keep positioning
+            });
+            return;
+        }
+
+        // Use GSAP for entry animation if available, otherwise CSS
+        if (typeof gsap !== 'undefined') {
+            gsap.fromTo(
+                this.items,
+                { scale: 0, opacity: 0 },
+                {
+                    scale: 1,
+                    opacity: 1,
+                    duration: 1,
+                    ease: 'back.out(1.2)',
+                    stagger: 0.05,
+                    scrollTrigger: {
+                        trigger: this.trackEl,
+                        start: 'top 80%',
+                        toggleActions: 'play none none reverse'
+                    }
+                }
+            );
+        } else {
+            // Fallback: CSS-based entry
+            this.items.forEach((item, i) => {
+                item.style.opacity = '0';
+                item.style.transition = `opacity 0.6s ease ${i * 0.05}s, transform 0.6s ease ${i * 0.05}s`;
+
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                }, 100 + i * 50);
+            });
+        }
+    }
 }
 
 // Copy to clipboard function
@@ -574,7 +941,7 @@ window.addEventListener('load', () => {
 
     // Small delay to ensure layout is final
     setTimeout(() => {
-        new SkillsNetwork('skillsNetwork', skillsData);
+        window.skillsNetworkInstance = new SkillsNetwork('skillsNetwork', skillsData);
     }, 100);
     const loadingStyles = document.createElement('style');
     loadingStyles.textContent = `

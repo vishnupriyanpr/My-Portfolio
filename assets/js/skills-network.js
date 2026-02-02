@@ -1,2 +1,0 @@
-            resizeObserver.observe(parent);
-        } else {

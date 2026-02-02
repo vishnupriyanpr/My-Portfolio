@@ -67,10 +67,14 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function raf(time) {
+<<<<<<< HEAD
         // Skip Lenis update when tab is hidden for performance
         if (!document.hidden) {
             lenis.raf(time);
         }
+=======
+        lenis.raf(time);
+>>>>>>> 63238509e3370dc5e7804df6ea71addf1712fae9
         requestAnimationFrame(raf);
     }
     requestAnimationFrame(raf);
@@ -386,7 +390,11 @@ async function renderPinnedProjects() {
             title: 'Oxocare',
             category: 'Android',
             link: 'https://github.com/vishnupriyanpr/oxocare',
+<<<<<<< HEAD
             img: 'https://images.unsplash.com/photo-1584515933487-779824d29609?auto=format&fit=crop&w=400&q=80', // Free Alternative (Medical Checklist)
+=======
+            img: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80', // ID: xDNwySMfR5I
+>>>>>>> 63238509e3370dc5e7804df6ea71addf1712fae9
             tech: ['kotlin', 'ai'],
             description: 'Smart healthcare companion app for tracking vitals and managing medical records.'
         },
@@ -555,6 +563,7 @@ class StickyProxyGallery {
                 <h3 class="active-title"></h3>
                 <p class="active-text"></p>
             </div>
+<<<<<<< HEAD
             <div class="gallery-nav-arrows">
                 <button class="gallery-nav-btn gallery-nav-prev" aria-label="Previous project">
                     <i class="fas fa-chevron-left"></i>
@@ -563,10 +572,13 @@ class StickyProxyGallery {
                     <i class="fas fa-chevron-right"></i>
                 </button>
             </div>
+=======
+>>>>>>> 63238509e3370dc5e7804df6ea71addf1712fae9
         `;
         this.stageEl.appendChild(this.descContainer);
         this.titleEl = this.descContainer.querySelector('.active-title');
         this.textEl = this.descContainer.querySelector('.active-text');
+<<<<<<< HEAD
 
         // Bind arrow navigation
         const prevBtn = this.descContainer.querySelector('.gallery-nav-prev');
@@ -634,6 +646,8 @@ class StickyProxyGallery {
             top: scrollPerProject,
             behavior: 'smooth'
         });
+=======
+>>>>>>> 63238509e3370dc5e7804df6ea71addf1712fae9
     }
 
     renderItems() {

@@ -6434,12 +6434,16 @@ body::after {
     margin: 0 auto;
     position: relative;
     padding: 4rem 0;
+<<<<<<< HEAD
     z-index: 10;
     isolation: isolate;
+=======
+>>>>>>> 63238509e3370dc5e7804df6ea71addf1712fae9
 }
 
 /* Specific image override for this layout to match reference size */
 /* Specific image override for this layout to match reference size */
+<<<<<<< HEAD
 /* Profile image wrapper */
 .profile-image {
     background: #0a0a0a;
@@ -6448,18 +6452,27 @@ body::after {
     z-index: 5;
 }
 
+=======
+>>>>>>> 63238509e3370dc5e7804df6ea71addf1712fae9
 .profile-card-layout .profile-img {
     width: 470px;
     /* Increased to match reference */
     height: 470px;
     max-width: none;
+<<<<<<< HEAD
     background: #0a0a0a;
+=======
+    background: #000;
+>>>>>>> 63238509e3370dc5e7804df6ea71addf1712fae9
     border-radius: 2rem;
     /* Bright Blue Frame as requested (Primary Color) */
     box-shadow: 0 0 0 6px #36bcf7, 0 10px 40px rgba(54, 188, 247, 0.4);
     transition: transform 0.3s ease;
+<<<<<<< HEAD
     position: relative;
     z-index: 5;
+=======
+>>>>>>> 63238509e3370dc5e7804df6ea71addf1712fae9
 }
 
 .profile-card-layout .profile-img:hover {
@@ -6467,15 +6480,25 @@ body::after {
 }
 
 .profile-card-content {
+<<<<<<< HEAD
     background: #0d0d0d !important;
     /* Solid dark opaque background */
     border: 1px solid rgba(54, 188, 247, 0.2);
+=======
+    background: #111111 !important;
+    /* Lighter Black Opaque */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+>>>>>>> 63238509e3370dc5e7804df6ea71addf1712fae9
     border-radius: 2rem;
     padding: 3.5rem;
     margin-left: -50px;
     /* Solid overlap */
     z-index: 10;
+<<<<<<< HEAD
     box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 1);
+=======
+    box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.95);
+>>>>>>> 63238509e3370dc5e7804df6ea71addf1712fae9
     flex: 1;
     max-width: 650px;
     text-align: left;
@@ -6577,6 +6600,7 @@ body::after {
     .profile-info {
         text-align: center !important;
     }
+<<<<<<< HEAD
 }
 
 /* Gallery Description & Navigation Container */
@@ -6656,4 +6680,6 @@ body::after {
         height: 44px;
         font-size: 1rem;
     }
+=======
+>>>>>>> 63238509e3370dc5e7804df6ea71addf1712fae9
 }

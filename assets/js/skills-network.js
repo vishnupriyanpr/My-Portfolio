@@ -74,12 +74,16 @@ class SkillsNetwork {
         // Setup events
         this.addInteraction();
         this.startOrganicMovement();
+<<<<<<< HEAD
         this.setupVisibilityObserver(); // Performance: pause when not in view
+=======
+>>>>>>> 63238509e3370dc5e7804df6ea71addf1712fae9
 
         // Start loop
         this.animate();
     }
 
+<<<<<<< HEAD
     // IntersectionObserver to pause animation when canvas is not visible
     setupVisibilityObserver() {
         const observer = new IntersectionObserver(
@@ -93,6 +97,8 @@ class SkillsNetwork {
         observer.observe(this.canvas);
     }
 
+=======
+>>>>>>> 63238509e3370dc5e7804df6ea71addf1712fae9
     attemptInit(attempt) {
         const success = this.resize();
         if (!success && attempt < 50) { // Retry for ~10 seconds
@@ -306,6 +312,7 @@ class SkillsNetwork {
     }
 
     animate() {
+<<<<<<< HEAD
         // Performance: Skip updates when canvas not visible or tab hidden
         if (!this.isVisible || document.hidden) {
             requestAnimationFrame(() => this.animate());
@@ -317,6 +324,13 @@ class SkillsNetwork {
             this.resize();
         }
 
+=======
+        // Self-healing: if dimensions are invalid, try running resize
+        if (this.width === 0 || this.height === 0) {
+            this.resize();
+        }
+
+>>>>>>> 63238509e3370dc5e7804df6ea71addf1712fae9
         // If still invalid, just loop wait
         if (this.width > 0 && this.height > 0) {
             this.updatePhysics();

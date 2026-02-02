@@ -8,6 +8,7 @@ class SkillsNetwork {
         this.connections = [];
         this.activeNode = null;
         this.hoverNode = null;
+        this.isVisible = true; // Track visibility for performance
 
         // Physics params
         this.repulsion = 800;
@@ -29,21 +30,14 @@ class SkillsNetwork {
             window.addEventListener('resize', () => this.resize());
         }
 
-        // Initial resize
-        this.resize();
-
-        // Force resize on window load to ensure layout is complete
-        if (document.readyState === 'complete') {
-            this.resize();
-        } else {
-            window.addEventListener('load', () => this.resize());
-        }
+        // Initial resize with retries
+        this.attemptInit(0);
 
         // Create Nodes
         this.skills.forEach(skill => {
             this.nodes.push({
-                x: Math.random() * this.width,
-                y: Math.random() * this.height,
+                x: Math.random() * this.width || Math.random() * 500, // Fallback if width is 0
+                y: Math.random() * this.height || Math.random() * 500,
                 vx: 0,
                 vy: 0,
                 radius: this.isMobile ? 30 : 40, // Bigger icons
@@ -77,9 +71,43 @@ class SkillsNetwork {
             }
         }
 
+        // Setup events
         this.addInteraction();
         this.startOrganicMovement();
+        this.setupVisibilityObserver(); // Performance: pause when not in view
+
+        // Start loop
         this.animate();
+    }
+
+    // IntersectionObserver to pause animation when canvas is not visible
+    setupVisibilityObserver() {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    this.isVisible = entry.isIntersecting;
+                });
+            },
+            { threshold: 0.1 } // 10% visible = active
+        );
+        observer.observe(this.canvas);
+    }
+
+    attemptInit(attempt) {
+        const success = this.resize();
+        if (!success && attempt < 50) { // Retry for ~10 seconds
+            // If dimensions are 0, try again shortly
+            setTimeout(() => this.attemptInit(attempt + 1), 200);
+        } else if (success) {
+            // Re-run setup if needed when dimensions finally arrive
+            this.nodes.forEach(node => {
+                // re-distribute if they were clumped at 0,0
+                if (node.x === 0 && node.y === 0) {
+                    node.x = Math.random() * this.width;
+                    node.y = Math.random() * this.height;
+                }
+            });
+        }
     }
 
     startOrganicMovement() {
@@ -124,6 +152,9 @@ class SkillsNetwork {
             this.height = 300;
         }
 
+        // If still 0 (hidden), abort update but return false
+        if (this.width === 0 || this.height === 0) return false;
+
         this.canvas.width = this.width;
         this.canvas.height = this.height;
 
@@ -138,6 +169,8 @@ class SkillsNetwork {
             this.centerPull = 0.002;
             this.nodes.forEach(node => { node.radius = 40; });
         }
+
+        return true;
     }
 
     updatePhysics() {
@@ -273,12 +306,23 @@ class SkillsNetwork {
     }
 
     animate() {
-        if (this.width === 0 || this.height === 0) {
+        // Performance: Skip updates when canvas not visible or tab hidden
+        if (!this.isVisible || document.hidden) {
             requestAnimationFrame(() => this.animate());
             return;
         }
-        this.updatePhysics();
-        this.draw();
+
+        // Self-healing: if dimensions are invalid, try running resize
+        if (this.width === 0 || this.height === 0) {
+            this.resize();
+        }
+
+        // If still invalid, just loop wait
+        if (this.width > 0 && this.height > 0) {
+            this.updatePhysics();
+            this.draw();
+        }
+
         requestAnimationFrame(() => this.animate());
     }
 

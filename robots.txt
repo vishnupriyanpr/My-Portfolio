@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /assets/images/
-
-Sitemap: https://vishnupriyan.vercel.app/sitemap.xml

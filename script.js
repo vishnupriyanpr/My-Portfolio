@@ -1530,6 +1530,7 @@ function initStickyKineticNavbar() {
         });
     });
 
+<<<<<<< HEAD
 
     console.log("Kinetic Navbar Initialized", { customEaseSupported });
 }
@@ -1555,3 +1556,7 @@ window.addEventListener('load', () => {
         }, 800);
     }
 });
+=======
+    console.log("Kinetic Navbar Initialized", { customEaseSupported });
+}
+>>>>>>> 59d462e6b2a08215598a9608174489e43a796286

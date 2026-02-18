@@ -11,7 +11,8 @@
         content="Portfolio of Vishnupriyan P R, an AI/ML Enthusiast and Backend Developer specializing in Python, PyTorch, and scalable systems. Explore my projects and skills.">
     <meta name="keywords"
         content="Vishnu, Vishnupriyan, Vishnupriyan P R, ML Developer, Backend Developer, AI Engineer, Competitive Programmer, Portfolio, Software Engineer">
-    <meta name="author" content="Vishnupriyan P R">
+    <meta name="author" content="Vis
+    hnupriyan P R">
     <meta name="robots" content="index, follow, noimageindex">
     <meta name="google-site-verification" content="HJxpoCsFWqhNd4GlXpte3OdJMgPbL81BFNxx5joBTWA" />
     <link rel="canonical" href="https://vishnupriyan.vercel.app/">
@@ -58,7 +59,7 @@
 
     <link rel="stylesheet" href="styles.css">
     <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@400;500;600;700&family=Rochester&family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" type="image/svg+xml"
@@ -66,6 +67,17 @@
 </head>
 
 <body>
+    <!-- Preloader -->
+    <!-- Preloader -->
+    <!-- Preloader -->
+    <div id="preloader">
+        <svg class="loader-v" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Thick V Shape Path -->
+            <!-- M30,30 L50,75 L70,30 -->
+            <path class="v-path-thick" d="M30 30 L50 75 L70 30" stroke="#36BCF7" stroke-width="12"
+                stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+    </div>
     <!-- Dynamic Background Particles -->
     <div class="particles" id="particles"></div>
 
@@ -85,22 +97,162 @@
         </div>
     </div>
 
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <ul class="nav-menu">
-                <li><a href="#about">ME</a></li>
-                <li><a href="#skills">Skills</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#experiences">Experiences</a></li>
-                <li><a href="#achievements">Achievements</a></li>
-                <li><a href="#connect">Connect</a></li>
-            </ul>
-            <div class="nav-logo">
-                <span class="logo-text">Vishnupriyan P R</span>
+    <!-- Dynamic Sticky Header -->
+    <div class="site-header-wrapper">
+        <header class="header">
+            <div class="container is--full">
+                <nav class="nav-row">
+                    <!-- Logo Removed -->
+
+
+                </nav>
             </div>
+        </header>
+
+        <!-- Fullscreen Menu Component (Moved Inside Wrapper) -->
+        <section class="fullscreen-menu-container">
+            <div data-nav="closed" class="nav-overlay-wrapper">
+                <div class="overlay"></div>
+                <nav class="menu-content">
+                    <div class="menu-bg">
+                        <div class="backdrop-layer first"></div>
+                        <div class="backdrop-layer second"></div>
+                        <div class="backdrop-layer"></div>
+
+                        <!-- Abstract Background Shapes -->
+                        <div class="ambient-background-shapes">
+                            <!-- Shape 1: Floating Circles -->
+                            <svg class="bg-shape bg-shape-1" viewBox="0 0 400 400" fill="none">
+                                <circle class="shape-element" cx="80" cy="120" r="40" fill="rgba(54, 188, 247, 0.15)" />
+                                <circle class="shape-element" cx="300" cy="80" r="60" fill="rgba(30, 136, 229, 0.12)" />
+                                <circle class="shape-element" cx="200" cy="300" r="80" fill="rgba(74, 200, 255, 0.1)" />
+                                <circle class="shape-element" cx="350" cy="280" r="30"
+                                    fill="rgba(54, 188, 247, 0.15)" />
+                            </svg>
+
+                            <!-- Shape 2: Wave Pattern -->
+                            <svg class="bg-shape bg-shape-2" viewBox="0 0 400 400" fill="none">
+                                <path class="shape-element" d="M0 200 Q100 100, 200 200 T 400 200"
+                                    stroke="rgba(54, 188, 247, 0.2)" stroke-width="60" fill="none" />
+                                <path class="shape-element" d="M0 280 Q100 180, 200 280 T 400 280"
+                                    stroke="rgba(30, 136, 229, 0.15)" stroke-width="40" fill="none" />
+                            </svg>
+
+                            <!-- Shape 3: Grid Dots -->
+                            <svg class="bg-shape bg-shape-3" viewBox="0 0 400 400" fill="none">
+                                <circle class="shape-element" cx="50" cy="50" r="8" fill="rgba(54, 188, 247, 0.3)" />
+                                <circle class="shape-element" cx="150" cy="50" r="8" fill="rgba(30, 136, 229, 0.3)" />
+                                <circle class="shape-element" cx="250" cy="50" r="8" fill="rgba(74, 200, 255, 0.3)" />
+                                <circle class="shape-element" cx="350" cy="50" r="8" fill="rgba(54, 188, 247, 0.3)" />
+                                <circle class="shape-element" cx="100" cy="150" r="12"
+                                    fill="rgba(30, 136, 229, 0.25)" />
+                                <circle class="shape-element" cx="200" cy="150" r="12"
+                                    fill="rgba(74, 200, 255, 0.25)" />
+                                <circle class="shape-element" cx="300" cy="150" r="12"
+                                    fill="rgba(54, 188, 247, 0.25)" />
+                            </svg>
+
+                            <!-- Shape 4: Organic Blobs -->
+                            <svg class="bg-shape bg-shape-4" viewBox="0 0 400 400" fill="none">
+                                <path class="shape-element"
+                                    d="M100 100 Q150 50, 200 100 Q250 150, 200 200 Q150 250, 100 200 Q50 150, 100 100"
+                                    fill="rgba(54, 188, 247, 0.12)" />
+                                <path class="shape-element"
+                                    d="M250 200 Q300 150, 350 200 Q400 250, 350 300 Q400 250, 350 300 Q300 350, 250 300 Q200 250, 250 200"
+                                    fill="rgba(74, 200, 255, 0.1)" />
+                            </svg>
+
+                            <!-- Shape 5: Diagonal Lines -->
+                            <svg class="bg-shape bg-shape-5" viewBox="0 0 400 400" fill="none">
+                                <line class="shape-element" x1="0" y1="100" x2="300" y2="400"
+                                    stroke="rgba(54, 188, 247, 0.15)" stroke-width="30" />
+                                <line class="shape-element" x1="100" y1="0" x2="400" y2="300"
+                                    stroke="rgba(30, 136, 229, 0.12)" stroke-width="25" />
+                                <line class="shape-element" x1="200" y1="0" x2="400" y2="200"
+                                    stroke="rgba(74, 200, 255, 0.1)" stroke-width="20" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="menu-content-wrapper">
+                        <ul class="menu-list">
+                            <li class="menu-list-item" data-shape="1">
+                                <a href="#about" class="nav-link w-inline-block">
+                                    <p class="nav-link-text">About Me</p>
+                                    <div class="nav-link-hover-bg"></div>
+                                </a>
+                            </li>
+                            <li class="menu-list-item" data-shape="2">
+                                <a href="#skills" class="nav-link w-inline-block">
+                                    <p class="nav-link-text">Skills</p>
+                                    <div class="nav-link-hover-bg"></div>
+                                </a>
+                            </li>
+                            <li class="menu-list-item" data-shape="3">
+                                <a href="#projects" class="nav-link w-inline-block">
+                                    <p class="nav-link-text">Projects</p>
+                                    <div class="nav-link-hover-bg"></div>
+                                </a>
+                            </li>
+                            <li class="menu-list-item" data-shape="4">
+                                <a href="#experiences" class="nav-link w-inline-block">
+                                    <p class="nav-link-text" data-menu-fade>Experiences</p>
+                                    <div class="nav-link-hover-bg"></div>
+                                </a>
+                            </li>
+                            <li class="menu-list-item" data-shape="5">
+                                <a href="#achievements" class="nav-link w-inline-block">
+                                    <p class="nav-link-text">Achievements</p>
+                                    <div class="nav-link-hover-bg"></div>
+                                </a>
+                            </li>
+                            <li class="menu-list-item" data-shape="1">
+                                <a href="#connect" class="nav-link w-inline-block">
+                                    <p class="nav-link-text">Contact</p>
+                                    <div class="nav-link-hover-bg"></div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </section>
+
+        <!-- Detached Menu Controls (Always on Top) -->
+        <div class="nav-row__right detatched-controls">
+            <!-- Clean Menu Indicator -->
+            <div class="nav-toggle-label" style="cursor: pointer; pointer-events: auto;">
+                <span class="toggle-text">click me</span>
+            </div>
+
+            <!-- Restored Menu Button -->
+            <button class="nav-close-btn" aria-label="Toggle Menu" style="pointer-events: auto;">
+                <div class="menu-button-text">
+                    <p class="p-large">Menu</p>
+                    <p class="p-large">Close</p>
+                </div>
+                <div class="icon-wrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 16 16" fill="none"
+                        class="menu-button-icon">
+                        <path d="M7.33333 16L7.33333 -3.2055e-07L8.66667 -3.78832e-07L8.66667 16L7.33333 16Z"
+                            fill="currentColor"></path>
+                        <path d="M16 8.66667L-2.62269e-07 8.66667L-3.78832e-07 7.33333L16 7.33333L16 8.66667Z"
+                            fill="currentColor"></path>
+                        <path d="M6 7.33333L7.33333 7.33333L7.33333 6C7.33333 6.73637 6.73638 7.33333 6 7.33333Z"
+                            fill="currentColor"></path>
+                        <path d="M10 7.33333L8.66667 7.33333L8.66667 6C8.66667 6.73638 9.26362 7.33333 10 7.33333Z"
+                            fill="currentColor"></path>
+                        <path d="M6 8.66667L7.33333 8.66667L7.33333 10C7.33333 9.26362 6.73638 8.66667 6 8.66667Z"
+                            fill="currentColor"></path>
+                        <path d="M10 8.66667L8.66667 8.66667L8.66667 10C8.66667 9.26362 9.26362 8.66667 10 8.66667Z"
+                            fill="currentColor"></path>
+                    </svg>
+                </div>
+            </button>
         </div>
-    </nav>
+    </div>
+
+
 
     <!-- Hero Section -->
     <section id="home" class="hero">
@@ -342,6 +494,34 @@
                             <div class="experience-skills">
                                 <span class="exp-skill-badge">Web Development</span>
                                 <span class="exp-skill-badge">Tech Management</span>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    <!-- Experience 3 -->
+                    <div class="timeline-entry">
+                        <div class="timeline-marker-col">
+                            <div class="timeline-dot"></div>
+                        </div>
+                        <div class="timeline-content-col">
+                            <h3 class="timeline-title">AI Intern</h3>
+                            <div class="timeline-meta">
+                                <span class="timeline-company">Sedin Technologies</span>
+                                <span class="timeline-date">December 2025 - February 2026</span>
+                            </div>
+                            <p class="timeline-description">
+                                Contributed Generative AI solutions, and automation agents to corporate knowledge bases,
+                                mastering LLM integration, vector storage, and structured pipelines for precise
+                                information retrieval. Engineered scalable Python automation scripts and APIs,
+                                delivering streamlined data processing and executive efficiency, for merging AI with
+                                corporate workspace
+                            </p>
+                            <div class="experience-skills">
+                                <span class="exp-skill-badge">LLM Integration</span>
+                                <span class="exp-skill-badge">Python</span>
+                                <span class="exp-skill-badge">Typescript & Playwright</span>
                             </div>
 
                             <div style="text-align: center; margin-top: 3rem;">
@@ -705,6 +885,7 @@
     <!-- GSAP for animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/CustomEase.min.js"></script>
 
     <script src="assets/js/skills-network.js"></script>
     <script src="https://unpkg.com/lenis@1.1.9/dist/lenis.min.js"></script> <!-- Smooth Scroll -->

@@ -1009,7 +1009,7 @@ window.addEventListener('load', () => {
         { name: 'TensorFlow', type: 'ai', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg' },
         { name: 'Java', type: 'lang', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg' },
         { name: 'C++', type: 'lang', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg' },
-        { name: 'JavaScript', type: 'lang', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg' },
+        { name: 'TypeScript', type: 'lang', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg' },
         { name: 'React', type: 'web', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
         { name: 'Node.js', type: 'web', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
         { name: 'HTML5', type: 'web', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg' },
@@ -1359,3 +1359,199 @@ function galleryCard(src, idx) {
         </div>
     </div>`;
 }
+
+/* ===== STICKY KINETIC NAVBAR LOGIC ===== */
+document.addEventListener('DOMContentLoaded', () => {
+    initStickyKineticNavbar();
+});
+
+function initStickyKineticNavbar() {
+    // Check if elements exist to avoid errors
+    const container = document.querySelector('.site-header-wrapper');
+    if (!container) return;
+
+    // --- 1. SETUP GSAP EASING ---
+    const easeName = "kinetic-ease";
+    let customEaseSupported = false;
+    try {
+        if (typeof CustomEase !== "undefined") {
+            CustomEase.create(easeName, "0.65, 0.01, 0.05, 0.99");
+            customEaseSupported = true;
+            console.log('[Nav] CustomEase loaded successfully');
+        } else {
+            console.log('[Nav] CustomEase not available, using expo.out fallback');
+        }
+    } catch (e) {
+        console.warn("[Nav] CustomEase failed:", e);
+    }
+
+    // --- 2. SELECT ELEMENTS ---
+    const navWrap = document.querySelector('.nav-overlay-wrapper');
+    const menuContent = document.querySelector('.menu-content');
+    const overlay = document.querySelector('.overlay');
+    const bgLayers = document.querySelectorAll('.backdrop-layer');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const fadeTargets = document.querySelectorAll('[data-menu-fade]');
+
+    // Toggle Buttons
+    const menuButton = document.querySelector('.nav-close-btn');
+    const menuButtonTexts = menuButton?.querySelectorAll('p');
+    const menuButtonIcon = menuButton?.querySelector('.menu-button-icon');
+    const toggleLabel = document.querySelector('.nav-toggle-label');
+
+    // Header Scroll Effect
+    const header = document.querySelector('.header');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 20) {
+            header.classList.add('scrolled');
+            if (header.parentElement) header.parentElement.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+            if (header.parentElement) header.parentElement.classList.remove('scrolled');
+        }
+    });
+
+    let isMenuOpen = false;
+
+    // --- 3. BUILD TIMELINE ---
+    const tl = gsap.timeline({
+        paused: true,
+        defaults: { ease: customEaseSupported ? easeName : "expo.out", duration: 0.7 },
+        onReverseComplete: () => {
+            gsap.set(navWrap, { display: 'none' });
+            navWrap.setAttribute('data-nav', 'closed');
+            if (menuButton) menuButton.classList.remove('menu-open');
+            if (toggleLabel) toggleLabel.classList.remove('menu-open');
+        }
+    });
+
+    // Sequence: show container → backdrop wipe → links stagger in
+    tl.set(navWrap, { display: 'block', pointerEvents: 'auto' })
+
+        // Button Text Swap
+        .fromTo(menuButtonTexts, { yPercent: 0 }, { yPercent: -100, stagger: 0.1 }, "<")
+        // Icon Rotation
+        .fromTo(menuButtonIcon, { rotation: 0 }, { rotation: 315 }, "<")
+
+        // Overlay Fade
+        .fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1 }, "<")
+
+        // Backdrop Layers Slide In (Left to Right wipe)
+        .fromTo(bgLayers, { xPercent: 101 }, { xPercent: 0, stagger: 0.12, duration: 0.575 }, "<")
+
+        // Nav Links Stagger In
+        .fromTo(navLinks,
+            { yPercent: 140, rotation: 10 },
+            { yPercent: 0, rotation: 0, stagger: 0.05 },
+            "<+=0.35"
+        );
+
+    // Optional Fade Targets
+    if (fadeTargets.length) {
+        tl.fromTo(fadeTargets,
+            { autoAlpha: 0, yPercent: 50 },
+            { autoAlpha: 1, yPercent: 0, stagger: 0.04, clearProps: "all" },
+            "<+=0.2"
+        );
+    }
+
+    // --- 4. TOGGLE FUNCTION ---
+    function toggleMenu() {
+        if (!isMenuOpen) {
+            // OPEN
+            navWrap.setAttribute('data-nav', 'open');
+            document.body.style.overflow = 'hidden';
+            isMenuOpen = true;
+            // Switch button/label to dark color for light menu background
+            if (menuButton) menuButton.classList.add('menu-open');
+            if (toggleLabel) toggleLabel.classList.add('menu-open');
+            tl.play();
+
+        } else {
+            // CLOSE
+            document.body.style.overflow = '';
+            isMenuOpen = false;
+            // Restore button/label to light color for dark page background
+            if (menuButton) menuButton.classList.remove('menu-open');
+            if (toggleLabel) toggleLabel.classList.remove('menu-open');
+            tl.reverse();
+        }
+    }
+
+    // --- 5. EVENT LISTENERS ---
+    if (menuButton) menuButton.addEventListener('click', toggleMenu);
+    if (toggleLabel) toggleLabel.addEventListener('click', toggleMenu);
+    if (overlay) overlay.addEventListener('click', toggleMenu);
+
+    // Close when clicking a link
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (isMenuOpen) toggleMenu();
+        });
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && isMenuOpen) toggleMenu();
+    });
+
+    // --- 6. KINETIC SHAPE HOVER EFFECTS ---
+    const menuItems = document.querySelectorAll('.menu-list-item[data-shape]');
+    const shapesContainer = document.querySelector('.ambient-background-shapes');
+
+    menuItems.forEach(item => {
+        const shapeIndex = item.getAttribute('data-shape');
+        const shape = shapesContainer?.querySelector(`.bg-shape-${shapeIndex}`);
+        if (!shape) return;
+
+        const shapeEls = shape.querySelectorAll('.shape-element');
+
+        item.addEventListener('mouseenter', () => {
+            // Deactivate others
+            shapesContainer.querySelectorAll('.bg-shape').forEach(s => s.classList.remove('active'));
+            shape.classList.add('active');
+
+            // Animate In (Reference: scale 0.5->1, opacity 0->1, rotate -10->0)
+            gsap.fromTo(shapeEls,
+                { scale: 0.5, opacity: 0, rotation: -10 },
+                { scale: 1, opacity: 1, rotation: 0, duration: 0.6, stagger: 0.08, ease: "back.out(1.7)", overwrite: "auto" }
+            );
+        });
+
+        item.addEventListener('mouseleave', () => {
+            // Animate Out
+            gsap.to(shapeEls, {
+                scale: 0.8, opacity: 0, duration: 0.3, ease: "power2.in",
+                onComplete: () => {
+                    shape.classList.remove('active');
+                },
+                overwrite: "auto"
+            });
+        });
+    });
+
+
+    console.log("Kinetic Navbar Initialized", { customEaseSupported });
+}
+
+// --- PRELOADER & LAYOUT FIX ---
+window.addEventListener('load', () => {
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+        // Ensure minimum visibility for branding and stability
+        setTimeout(() => {
+            preloader.classList.add('loaded');
+
+            // Remove from DOM after transition
+            setTimeout(() => {
+                preloader.remove();
+            }, 600);
+
+            // CRITICAL: Refresh ScrollTrigger references after layout is settled
+            // This fixes the "Achievements" section flash/breakage
+            if (typeof ScrollTrigger !== 'undefined') {
+                ScrollTrigger.refresh();
+            }
+        }, 800);
+    }
+});

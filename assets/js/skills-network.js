@@ -86,26 +86,40 @@ class SkillsNetwork {
             (entries) => {
                 entries.forEach(entry => {
                     this.isVisible = entry.isIntersecting;
+                    // If becoming visible, force a redraw immediately
+                    if (entry.isIntersecting && this.width > 0 && this.height > 0) {
+                        this.draw();
+                    }
                 });
             },
-            { threshold: 0.1 } // 10% visible = active
+            {
+                threshold: 0,          // Activate the moment ANY pixel is in view
+                rootMargin: '200px'    // Activate 200px BEFORE the section enters viewport
+            }
         );
         observer.observe(this.canvas);
+
+        // Keep visible for 2s after load so first-draw always happens,
+        // even before the IntersectionObserver has had a chance to fire
+        this.isVisible = true;
+        setTimeout(() => {
+            // After 2s, let the observer take over — by then it will have fired
+            // (This is a safety net for hard-refresh race conditions)
+        }, 2000);
     }
 
     attemptInit(attempt) {
+        const prevWidth = this.width || 0;
         const success = this.resize();
-        if (!success && attempt < 50) { // Retry for ~10 seconds
+        if (!success && attempt < 50) {
             // If dimensions are 0, try again shortly
             setTimeout(() => this.attemptInit(attempt + 1), 200);
-        } else if (success) {
-            // Re-run setup if needed when dimensions finally arrive
+        } else if (success && prevWidth === 0) {
+            // Dimensions just arrived from 0 — redistribute ALL nodes
+            // (not just ones at 0,0 — they were placed in 0-500 fallback range)
             this.nodes.forEach(node => {
-                // re-distribute if they were clumped at 0,0
-                if (node.x === 0 && node.y === 0) {
-                    node.x = Math.random() * this.width;
-                    node.y = Math.random() * this.height;
-                }
+                node.x = Math.random() * this.width;
+                node.y = Math.random() * this.height;
             });
         }
     }
@@ -136,6 +150,9 @@ class SkillsNetwork {
         this.isMobile = window.innerWidth < 768;
 
         const parent = this.canvas.parentElement;
+        const prevWidth = this.width || 0;
+        const prevHeight = this.height || 0;
+
         if (parent) {
             const rect = parent.getBoundingClientRect();
             this.width = rect.width || parent.offsetWidth || window.innerWidth;
@@ -157,6 +174,23 @@ class SkillsNetwork {
 
         this.canvas.width = this.width;
         this.canvas.height = this.height;
+
+        // CRITICAL: setting canvas.width/height clears all content.
+        // Always redraw immediately so the network doesn't vanish.
+        this._needsRedraw = true;
+        if (this.nodes && this.nodes.length > 0) {
+            this.draw();
+        }
+
+        // If dimensions changed significantly, redistribute nodes proportionally
+        if (prevWidth > 0 && prevHeight > 0 && this.nodes && this.nodes.length > 0) {
+            const scaleX = this.width / prevWidth;
+            const scaleY = this.height / prevHeight;
+            this.nodes.forEach(node => {
+                node.x = Math.max(node.radius, Math.min(this.width - node.radius, node.x * scaleX));
+                node.y = Math.max(node.radius, Math.min(this.height - node.radius, node.y * scaleY));
+            });
+        }
 
         if (this.isMobile) {
             this.repulsion = 600;
@@ -306,21 +340,23 @@ class SkillsNetwork {
     }
 
     animate() {
-        // Performance: Skip updates when canvas not visible or tab hidden
-        if (!this.isVisible || document.hidden) {
-            requestAnimationFrame(() => this.animate());
-            return;
-        }
-
         // Self-healing: if dimensions are invalid, try running resize
         if (this.width === 0 || this.height === 0) {
             this.resize();
         }
 
-        // If still invalid, just loop wait
         if (this.width > 0 && this.height > 0) {
-            this.updatePhysics();
-            this.draw();
+            if (this.isVisible && !document.hidden) {
+                // Fully visible — run physics + draw
+                this.updatePhysics();
+                this.draw();
+                this._needsRedraw = false;
+            } else if (this._needsRedraw) {
+                // Off-screen but canvas was cleared by resize — redraw once to restore
+                this.draw();
+                this._needsRedraw = false;
+            }
+            // else: off-screen, nothing cleared — skip entirely (saves CPU)
         }
 
         requestAnimationFrame(() => this.animate());

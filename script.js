@@ -11,8 +11,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const particlesContainer = document.getElementById('particles');
         if (!particlesContainer) return;
 
-        const isSmall = window.innerWidth <= 600;
-        const particleCount = isSmall ? 80 : 220; // reduced density on small screens for performance
+        const isSmall = window.innerWidth <= 800;
+        const particleCount = isSmall ? 40 : 120; // heavily reduced for scroll performance
 
         for (let i = 0; i < particleCount; i++) {
             const particle = document.createElement('div');
@@ -56,12 +56,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initialize Lenis for smooth scrolling
     const lenis = new Lenis({
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        duration: 2.0,
+        easing: (t) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t),
         direction: 'vertical',
         gestureDirection: 'vertical',
         smooth: true,
-        mouseMultiplier: 1,
+        mouseMultiplier: 1.3,
         smoothTouch: false,
         touchMultiplier: 2,
     });
@@ -209,14 +209,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Typing effect removed in favor of CSS sliding animation
 
 
-    // Parallax effect for background elements
-    // remove heavy parallax selector; keep simple passive scroll marker
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(() => { ticking = false; });
-    }, { passive: true });
+    // (removed empty parallax scroll listener — was consuming events for no work)
 
     // Add hover effects to project cards
     // CSS already handles hover transitions for project cards; remove JS listeners
@@ -492,7 +485,7 @@ class StickyProxyGallery {
         this.baseRadius = options.baseRadius || 450;
         this.mobileRadius = options.mobileRadius || 200;
         this.visiblePercentage = options.visiblePercentage || 50;
-        this.lerpFactor = options.lerpFactor || 0.05; // Smoothing factor (0-1)
+        this.lerpFactor = window.innerWidth < 768 ? 0.07 : (options.lerpFactor || 0.035);
 
         // State
         this.items = [];
@@ -742,8 +735,21 @@ class StickyProxyGallery {
     }
 
     setHovered(index) {
-        this.hoveredIndex = index;
-        this.updateActiveState();
+        // Debounce hover to prevent rapid zoom flicker during scroll rotation
+        // When cards rotate under a stationary cursor, mouseenter/leave fire rapidly
+        clearTimeout(this._hoverDebounce);
+
+        if (index === null) {
+            // Unhover immediately so cards don't stay zoomed when cursor leaves
+            this.hoveredIndex = null;
+            this.updateActiveState();
+        } else {
+            // Slight delay before zooming in — prevents micro-hover flashes
+            this._hoverDebounce = setTimeout(() => {
+                this.hoveredIndex = index;
+                this.updateActiveState();
+            }, 100);
+        }
     }
 
     /**
@@ -778,7 +784,26 @@ class StickyProxyGallery {
      * Uses requestAnimationFrame for optimal performance
      */
     startAnimationLoop() {
+        this.isVisible = false;
+
+        // Only run the rAF loop when the gallery track is in view
+        const galleryObserver = new IntersectionObserver((entries) => {
+            this.isVisible = entries[0].isIntersecting;
+            if (this.isVisible && !this._rafRunning) {
+                this._rafRunning = true;
+                requestAnimationFrame(animate);
+            }
+        }, { threshold: 0, rootMargin: '200px' });
+        galleryObserver.observe(this.trackEl);
+
+        this._rafRunning = false;
+
         const animate = () => {
+            if (!this.isVisible) {
+                this._rafRunning = false;
+                return; // Stop the loop when off-screen
+            }
+
             // Get target rotation from scroll progress
             const progress = this.getScrollProgress();
             this.targetRotation = progress * 360; // Full rotation
@@ -797,18 +822,13 @@ class StickyProxyGallery {
             const count = this.items.length;
             const anglePerItem = 360 / count;
 
-            // Robust active index finding:
-            // Calculate effective angle of each item considering rotation
-            // We want to find the item closest to -90deg (Top) which is 270deg in 0-360 scale
             let minDiff = Infinity;
             let activeIdx = 0;
 
             for (let i = 0; i < count; i++) {
-                // Effective angle for this item considering rotation
                 let effectiveAngle = ((i * anglePerItem + this.currentRotation) % 360 + 360) % 360;
-                // Distance to 270 deg (Top)
                 let diff = Math.abs(effectiveAngle - 270);
-                if (diff > 180) diff = 360 - diff; // Wrap around
+                if (diff > 180) diff = 360 - diff;
 
                 if (diff < minDiff) {
                     minDiff = diff;
@@ -821,14 +841,15 @@ class StickyProxyGallery {
                 this.updateActiveState();
             }
 
-            // Also update continuously if needed (e.g. for smooth transitions), but state-based is cleaner for text
-
-            // Continue the loop
+            // Continue the loop only while visible
             requestAnimationFrame(animate);
         };
 
-        // Start the loop
-        requestAnimationFrame(animate);
+        // Initial start if already visible
+        if (this.isVisible) {
+            this._rafRunning = true;
+            requestAnimationFrame(animate);
+        }
     }
 
     updateActiveState() {
@@ -996,6 +1017,126 @@ notificationStyles.textContent = `
     .nav-menu a.active::after { width: 100%; }
 `;
 
+// ===== FLOWING MENU — React-to-Vanilla Conversion =====
+// Edge-detecting marquee hover effect for sidebar nav items
+class FlowingMenuController {
+    constructor() {
+        this.items = [];
+        this.animationDefaults = { duration: 0.5, ease: 'power3.inOut' };
+        this.initialized = false;
+    }
+
+    init() {
+        if (this.initialized) return;
+        const navLinks = document.querySelectorAll('.flowing-menu .nav-link[data-flow-text]');
+        if (!navLinks.length) return;
+
+        navLinks.forEach(link => {
+            const text = link.dataset.flowText;
+            const image = link.dataset.flowImage;
+            const marqueeInner = link.querySelector('.marquee__inner');
+            const marquee = link.querySelector('.marquee');
+
+            if (!marqueeInner || !marquee) return;
+
+            // Populate static text
+            this.populateMarquee(marqueeInner, text);
+
+            // Bind hover events
+            link.addEventListener('mouseenter', (ev) => this.handleMouseEnter(ev, link));
+            link.addEventListener('mouseleave', (ev) => this.handleMouseLeave(ev, link));
+
+            this.items.push({ link, marquee, marqueeInner, text });
+        });
+
+        this.initialized = true;
+    }
+
+    populateMarquee(innerEl, text) {
+        // Single static centered text — no scrolling
+        innerEl.innerHTML = `<div class="marquee__part"><span>${text}</span></div>`;
+    }
+
+    findClosestEdge(mouseX, mouseY, width, height) {
+        const topDist = this.distMetric(mouseX, mouseY, width / 2, 0);
+        const bottomDist = this.distMetric(mouseX, mouseY, width / 2, height);
+        return topDist < bottomDist ? 'top' : 'bottom';
+    }
+
+    distMetric(x, y, x2, y2) {
+        const xDiff = x - x2;
+        const yDiff = y - y2;
+        return xDiff * xDiff + yDiff * yDiff;
+    }
+
+    handleMouseEnter(ev, link) {
+        const marquee = link.querySelector('.marquee');
+        const marqueeInner = link.querySelector('.marquee__inner');
+        if (!marquee || !marqueeInner) return;
+
+        const rect = link.getBoundingClientRect();
+        const x = ev.clientX - rect.left;
+        const y = ev.clientY - rect.top;
+        const edge = this.findClosestEdge(x, y, rect.width, rect.height);
+
+        gsap.timeline({ defaults: this.animationDefaults })
+            .set(marquee, { y: edge === 'top' ? '-101%' : '101%' }, 0)
+            .set(marqueeInner, { y: edge === 'top' ? '101%' : '-101%' }, 0)
+            .to([marquee, marqueeInner], { y: '0%' }, 0);
+    }
+
+    handleMouseLeave(ev, link) {
+        const marquee = link.querySelector('.marquee');
+        const marqueeInner = link.querySelector('.marquee__inner');
+        if (!marquee || !marqueeInner) return;
+
+        const rect = link.getBoundingClientRect();
+        const x = ev.clientX - rect.left;
+        const y = ev.clientY - rect.top;
+        const edge = this.findClosestEdge(x, y, rect.width, rect.height);
+
+        gsap.timeline({ defaults: this.animationDefaults })
+            .to(marquee, { y: edge === 'top' ? '-101%' : '101%' }, 0)
+            .to(marqueeInner, { y: edge === 'top' ? '101%' : '-101%' }, 0);
+    }
+
+    resetAll() {
+        // Instantly kill any in-progress marquee tweens and snap all overlays hidden
+        this.items.forEach(item => {
+            const marquee = item.link.querySelector('.marquee');
+            const marqueeInner = item.link.querySelector('.marquee__inner');
+            if (marquee) {
+                gsap.killTweensOf(marquee);
+                gsap.set(marquee, { y: '101%' });
+            }
+            if (marqueeInner) {
+                gsap.killTweensOf(marqueeInner);
+                gsap.set(marqueeInner, { y: '0%' });
+            }
+        });
+    }
+}
+
+// Initialize FlowingMenu when menu opens
+window.flowingMenu = new FlowingMenuController();
+
+// Use a MutationObserver to detect when the sidebar opens
+const navOverlayWrapper = document.querySelector('.nav-overlay-wrapper');
+if (navOverlayWrapper) {
+    const menuObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'data-nav') {
+                const state = navOverlayWrapper.getAttribute('data-nav');
+                if (state === 'open') {
+                    // Small delay to let the GSAP open animation finish populating DOM
+                    setTimeout(() => flowingMenu.init(), 300);
+                }
+            }
+        });
+    });
+    menuObserver.observe(navOverlayWrapper, { attributes: true });
+}
+
 document.head.appendChild(notificationStyles);
 
 // Add loading animation
@@ -1024,10 +1165,22 @@ window.addEventListener('load', () => {
         { name: 'Linux', type: 'ops', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg' }
     ];
 
-    // Small delay to ensure layout is final
-    setTimeout(() => {
-        window.skillsNetworkInstance = new SkillsNetwork('skillsNetwork', skillsData);
-    }, 100);
+    // Delay init past preloader: preloader takes ~1.4s to finish fading out.
+    // Initializing at 100ms means canvas dimensions are often 0 (still hidden).
+    // 1600ms ensures layout has fully settled before we measure canvas size.
+    const initNetwork = (retries = 0) => {
+        const canvas = document.getElementById('skillsNetwork');
+        if (!canvas) return;
+        const parent = canvas.parentElement;
+        const hasSize = parent && (parent.getBoundingClientRect().width > 0);
+        if (hasSize || retries >= 10) {
+            window.skillsNetworkInstance = new SkillsNetwork('skillsNetwork', skillsData);
+        } else {
+            // Parent still has no size — retry every 300ms (up to 10 more times)
+            setTimeout(() => initNetwork(retries + 1), 300);
+        }
+    };
+    setTimeout(initNetwork, 1600);
     const loadingStyles = document.createElement('style');
     loadingStyles.textContent = `
         body:not(.loaded) { opacity: 0; transition: opacity 0.5s ease; }
@@ -1202,38 +1355,30 @@ window.addEventListener('load', () => {
     });
 
     // --- Parallax Scroll Effect for Achievements ---
-    // Move cards at different speeds based on column/position
+    // Move cards at different speeds based on column/position — throttled with rAF
     const masonryGrid = document.querySelector('.achievements-masonry');
     if (masonryGrid) {
+        let parallaxTicking = false;
         window.addEventListener('scroll', () => {
-            if (window.innerWidth < 768) return; // Disable on mobile
-
-            const scrollY = window.scrollY;
-            const viewportHeight = window.innerHeight;
-
-            cards.forEach((card, index) => {
-                const rect = card.getBoundingClientRect();
-
-                // Only animate if in view (with buffer)
-                if (rect.top < viewportHeight + 100 && rect.bottom > -100) {
-                    // Determine speed based on index (simulating columns)
-                    // 0, 3, 6 -> Col 1 (Fast)
-                    // 1, 4, 7 -> Col 2 (Slow)
-                    // 2, 5, 8 -> Col 3 (Medium)
-                    let speed = 0;
-                    if (index % 3 === 0) speed = -15; // Move up faster
-                    else if (index % 3 === 1) speed = 0; // Normal
-                    else speed = 15; // Move up slower (lag)
-
-                    // Calculate offset based on scroll progress through viewport
-                    // 0 when centered, +/- when above/below
-                    const centerOffset = (viewportHeight / 2) - (rect.top + rect.height / 2);
-                    const parallaxY = (centerOffset / viewportHeight) * speed;
-
-                    card.style.transform = `translateY(${parallaxY}px)`;
-                }
+            if (window.innerWidth < 768 || parallaxTicking) return;
+            parallaxTicking = true;
+            requestAnimationFrame(() => {
+                const viewportHeight = window.innerHeight;
+                cards.forEach((card, index) => {
+                    const rect = card.getBoundingClientRect();
+                    if (rect.top < viewportHeight + 100 && rect.bottom > -100) {
+                        let speed = 0;
+                        if (index % 3 === 0) speed = -15;
+                        else if (index % 3 === 1) speed = 0;
+                        else speed = 15;
+                        const centerOffset = (viewportHeight / 2) - (rect.top + rect.height / 2);
+                        const parallaxY = (centerOffset / viewportHeight) * speed;
+                        card.style.transform = `translateY(${parallaxY}px)`;
+                    }
+                });
+                parallaxTicking = false;
             });
-        });
+        }, { passive: true });
     }
 });
 
@@ -1399,17 +1544,23 @@ function initStickyKineticNavbar() {
     const menuButtonIcon = menuButton?.querySelector('.menu-button-icon');
     const toggleLabel = document.querySelector('.nav-toggle-label');
 
-    // Header Scroll Effect
+    // Header Scroll Effect — throttled with rAF
     const header = document.querySelector('.header');
+    let headerScrollTicking = false;
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 20) {
-            header.classList.add('scrolled');
-            if (header.parentElement) header.parentElement.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-            if (header.parentElement) header.parentElement.classList.remove('scrolled');
-        }
-    });
+        if (headerScrollTicking) return;
+        headerScrollTicking = true;
+        requestAnimationFrame(() => {
+            if (window.scrollY > 20) {
+                header.classList.add('scrolled');
+                if (header.parentElement) header.parentElement.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+                if (header.parentElement) header.parentElement.classList.remove('scrolled');
+            }
+            headerScrollTicking = false;
+        });
+    }, { passive: true });
 
     let isMenuOpen = false;
 
@@ -1458,23 +1609,22 @@ function initStickyKineticNavbar() {
     // --- 4. TOGGLE FUNCTION ---
     function toggleMenu() {
         if (!isMenuOpen) {
-            // OPEN
+            // OPEN — normal speed for atmosphere
             navWrap.setAttribute('data-nav', 'open');
             document.body.style.overflow = 'hidden';
             isMenuOpen = true;
-            // Switch button/label to dark color for light menu background
             if (menuButton) menuButton.classList.add('menu-open');
             if (toggleLabel) toggleLabel.classList.add('menu-open');
-            tl.play();
+            tl.timeScale(1).play();
 
         } else {
-            // CLOSE
+            // CLOSE — 2.5× speed so dismissal feels instant
+            if (window.flowingMenu) window.flowingMenu.resetAll();
             document.body.style.overflow = '';
             isMenuOpen = false;
-            // Restore button/label to light color for dark page background
             if (menuButton) menuButton.classList.remove('menu-open');
             if (toggleLabel) toggleLabel.classList.remove('menu-open');
-            tl.reverse();
+            tl.timeScale(1.2).reverse();
         }
     }
 
@@ -1483,10 +1633,24 @@ function initStickyKineticNavbar() {
     if (toggleLabel) toggleLabel.addEventListener('click', toggleMenu);
     if (overlay) overlay.addEventListener('click', toggleMenu);
 
-    // Close when clicking a link
+    // Close when clicking a link — scroll AFTER sidebar closes, not simultaneously
     navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            if (isMenuOpen) toggleMenu();
+        link.addEventListener('click', (e) => {
+            if (!isMenuOpen) return;
+            const href = link.getAttribute('href');
+            const target = href && href.startsWith('#') ? document.querySelector(href) : null;
+            if (target) {
+                // Block immediate anchor jump — let the close animation finish cleanly
+                e.preventDefault();
+                toggleMenu();
+                // Scroll to section after close animation completes
+                const closeDuration = (tl.totalDuration() / 3.3) * 1000; // ms
+                setTimeout(() => {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, closeDuration);
+            } else {
+                toggleMenu();
+            }
         });
     });
 

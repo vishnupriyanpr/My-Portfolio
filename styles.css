@@ -84,7 +84,7 @@ body::after {
     height: 300px;
     top: -10%;
     left: -15%;
-    animation: spaceFloat 25s ease-in-out infinite, spaceGlow 8s ease-in-out infinite;
+    animation-duration: 25s;
 }
 
 .space-element:nth-child(2) {
@@ -92,7 +92,8 @@ body::after {
     height: 200px;
     top: 60%;
     right: -15%;
-    animation: spaceFloat 30s ease-in-out infinite reverse, spaceGlow 10s ease-in-out infinite;
+    animation-duration: 30s;
+    animation-direction: reverse;
 }
 
 .space-element:nth-child(3) {
@@ -100,7 +101,7 @@ body::after {
     height: 150px;
     top: -5%;
     right: -10%;
-    animation: spaceFloat 35s ease-in-out infinite, spaceGlow 12s ease-in-out infinite;
+    animation-duration: 35s;
 }
 
 .space-element:nth-child(4) {
@@ -108,7 +109,8 @@ body::after {
     height: 250px;
     bottom: -15%;
     left: -10%;
-    animation: spaceFloat 28s ease-in-out infinite reverse, spaceGlow 9s ease-in-out infinite;
+    animation-duration: 28s;
+    animation-direction: reverse;
 }
 
 .space-element:nth-child(5) {
@@ -116,7 +118,7 @@ body::after {
     height: 180px;
     top: 70%;
     left: -12%;
-    animation: spaceFloat 32s ease-in-out infinite, spaceGlow 11s ease-in-out infinite;
+    animation-duration: 32s;
 }
 
 .particle {
@@ -124,43 +126,39 @@ body::after {
     width: 2px;
     height: 2px;
     background: rgba(255, 255, 255, 0.8);
-    clip-path: polygon(50% 0%, 65% 40%, 100% 50%, 65% 60%, 50% 100%, 35% 60%, 0% 50%, 35% 40%);
-    box-shadow: 0 0 4px rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
     animation: particleFloat 20s linear infinite;
     transform-origin: center;
     bottom: -10px;
-    will-change: transform, opacity;
+    will-change: transform;
     backface-visibility: hidden;
+    contain: strict;
 }
 
 .particle:nth-child(odd) {
     background: rgba(255, 255, 255, 0.7);
-    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-    animation: particleFloat 25s linear infinite, particleTwinkle 4s ease-in-out infinite;
+    animation-duration: 25s;
     width: 3px;
     height: 3px;
 }
 
 .particle:nth-child(3n) {
     background: rgba(200, 230, 255, 0.8);
-    box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
-    animation: particleFloat 30s linear infinite, particlePulse 5s ease-in-out infinite;
+    animation-duration: 30s;
+    width: 3px;
+    height: 3px;
+}
+
+.particle:nth-child(4n) {
+    background: rgba(255, 250, 200, 0.7);
+    animation-duration: 35s;
     width: 4px;
     height: 4px;
 }
 
-.particle:nth-child(4n) {
-    background: rgba(255, 250, 200, 0.8);
-    box-shadow: 0 0 7px rgba(255, 255, 255, 0.3);
-    animation: particleFloat 35s linear infinite, particleGlow 6s ease-in-out infinite;
-    width: 5px;
-    height: 5px;
-}
-
 .particle:nth-child(5n) {
-    background: rgba(255, 255, 255, 0.6);
-    box-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
-    animation: particleFloat 40s linear infinite, particleShimmer 7s ease-in-out infinite;
+    background: rgba(255, 255, 255, 0.5);
+    animation-duration: 40s;
     width: 2px;
     height: 2px;
 }
@@ -673,6 +671,8 @@ body::after {
     border-radius: 20px 0 0 20px;
     z-index: 3;
     /* NO CSS transform — GSAP fromTo handles xPercent */
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 /* First to appear: White */
@@ -735,6 +735,12 @@ body::after {
     pointer-events: auto;
 }
 
+/* Flowing menu overrides list to full-width rows */
+.menu-list.flowing-menu {
+    align-items: stretch;
+    width: 100%;
+}
+
 .menu-list-item {
     overflow: hidden;
     padding: 0.15em 0;
@@ -748,10 +754,10 @@ body::after {
     color: #131313;
     -webkit-text-stroke: 0;
     font-family: 'Anton', 'Inter', sans-serif;
-    font-size: clamp(3.5rem, 6.5vw, 6.5rem);
+    font-size: clamp(2.8rem, 5vw, 5rem);
     font-weight: 400;
     text-transform: uppercase;
-    line-height: 1.05;
+    line-height: 1;
     letter-spacing: 0.02em;
     position: relative;
     transition: opacity 0.3s ease;
@@ -768,6 +774,101 @@ body::after {
 
 .nav-link-hover-bg {
     display: none;
+}
+
+/* ===== FLOWING MENU — Marquee Hover Effect ===== */
+
+/* Make each menu item a relative container for the marquee overlay */
+.flowing-menu .menu-list-item {
+    position: relative;
+    overflow: hidden;
+    border-top: 1px solid rgba(19, 19, 19, 0.12);
+    width: 100%;
+}
+
+.flowing-menu .menu-list-item:first-child {
+    border-top: none;
+}
+
+/* The nav-link needs to be the positioning context */
+.flowing-menu .nav-link {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0;
+    width: 100%;
+}
+
+/* Remove the default opacity hover — marquee replaces it */
+.flowing-menu .nav-link:hover {
+    opacity: 1;
+}
+
+/* Marquee overlay — slides in from top/bottom via GSAP */
+.flowing-menu .marquee {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    transform: translate3d(0, 101%, 0);
+    background-color: #ffffff;
+    z-index: 5;
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+.flowing-menu .marquee__inner-wrap {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.flowing-menu .marquee__inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+.flowing-menu .marquee__part {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.flowing-menu .marquee span {
+    white-space: nowrap;
+    text-transform: uppercase;
+    font-family: 'Anton', 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: clamp(2.2rem, 4vw, 4rem);
+    line-height: 1;
+    padding: 0 2vw;
+    color: #060010;
+    text-align: center;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .flowing-menu .marquee span {
+        font-size: clamp(1.8rem, 6vw, 3rem);
+        padding: 0 2vw;
+    }
+
+    .flowing-menu .marquee__img {
+        width: 100px;
+        height: 35px;
+        margin: 0 3vw;
+    }
 }
 
 /* When menu open: keep header text WHITE */
@@ -2741,13 +2842,14 @@ body::after {
     border: 4px solid rgba(54, 188, 247, 0.2);
     border-radius: 20px;
     padding: 2rem;
-    transition: all 0.3s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
     position: relative;
     cursor: pointer;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     min-height: 350px;
+    will-change: transform;
 }
 
 .achievement-card:hover {
@@ -2767,7 +2869,7 @@ body::after {
     font-weight: 600;
     margin-top: auto;
     text-align: center;
-    transition: all 0.3s ease;
+    transition: color 0.15s ease, text-shadow 0.15s ease;
     line-height: 1.4;
     padding-top: 1rem;
 }
@@ -2782,7 +2884,7 @@ body::after {
     aspect-ratio: 4/3;
     border-radius: 16px;
     overflow: hidden;
-    transition: all 0.3s ease;
+    transition: transform 0.15s ease;
     margin-bottom: 1rem;
     position: relative;
 }
@@ -2791,7 +2893,8 @@ body::after {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: all 0.3s ease;
+    transition: transform 0.15s ease, filter 0.15s ease;
+    will-change: transform;
 }
 
 .achievement-card:hover .achievement-image img {
@@ -2855,7 +2958,8 @@ body::after {
     border: 4px solid rgba(54, 188, 247, 0.2);
     border-radius: 20px;
     padding: 1rem;
-    transition: all 0.3s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    will-change: transform;
 }
 
 .achievement-image-adaptive {
@@ -2863,7 +2967,7 @@ body::after {
     aspect-ratio: 3/2;
     border-radius: 16px;
     overflow: hidden;
-    transition: all 0.3s ease;
+    transition: transform 0.15s ease;
     position: relative;
     margin-bottom: 0.5rem;
 }
@@ -2872,7 +2976,8 @@ body::after {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: all 0.3s ease;
+    transition: transform 0.15s ease, filter 0.15s ease;
+    will-change: transform;
 }
 
 .achievement-card.large-card:hover .achievement-image-adaptive img {
@@ -4757,23 +4862,21 @@ body::after {
     }
 
     .profile-img {
-        width: 200px;
-        /* Smaller image */
-        height: 200px;
-        max-width: 65vw;
+        width: 280px;
+        height: 280px;
+        max-width: 80vw;
         object-fit: cover;
         object-position: top center;
         border-radius: 20px;
         box-shadow:
             0 10px 30px rgba(0, 0, 0, 0.5),
             0 0 0 3px rgba(54, 188, 247, 0.3);
-        /* Thinner frame */
     }
 
     /* Specific fix for About section image */
     .about .profile-img {
         width: 100%;
-        max-width: 220px;
+        max-width: 300px;
         height: auto;
         aspect-ratio: 1/1;
         object-fit: cover;
@@ -6196,8 +6299,8 @@ body::after {
 
 /* TRACK: Very tall container to define scroll duration */
 .gallery-track {
-    height: 400vh;
-    /* 400vh = 4 screens of scroll = full rotation */
+    height: 300vh;
+    /* 300vh = 3 screens of scroll = full rotation */
     position: relative;
 }
 
@@ -6211,9 +6314,12 @@ body::after {
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    /* GPU composite layer for buttery smooth scroll */
+    transform: translateZ(0);
+    backface-visibility: hidden;
     /* Fade mask - cards at bottom fade out */
-    mask-image: linear-gradient(to top, transparent 0%, black 35%, black 100%);
-    -webkit-mask-image: linear-gradient(to top, transparent 0%, black 35%, black 100%);
+    mask-image: linear-gradient(to top, transparent 0%, black 30%, black 100%);
+    -webkit-mask-image: linear-gradient(to top, transparent 0%, black 30%, black 100%);
 }
 
 /* WHEEL: The rotating circle - center offset below viewport */
@@ -6221,10 +6327,11 @@ body::after {
     position: absolute;
     left: 50%;
     will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
     margin: 0;
     padding: 0;
     list-style: none;
-    /* Dimensions set by JavaScript based on radius */
 }
 
 /* 
@@ -6249,7 +6356,10 @@ body::after {
     outline: none;
     text-align: left;
     border-radius: 0.75rem;
-    transition: all 0.5s ease-out;
+    /* Smooth expo-out: fast start, silky deceleration */
+    transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: transform, filter, opacity;
 }
 
@@ -6263,7 +6373,7 @@ body::after {
  * Others when any hovered: blur-[2px] opacity-40 grayscale
  */
 .gallery-item-inner.is-hovered {
-    transform: scale(1.25) translateY(-32px);
+    transform: scale(1.15) translateY(-20px);
     z-index: 100;
 }
 
@@ -6532,8 +6642,7 @@ body::after {
  */
 .gallery-active-description {
     position: absolute;
-    bottom: 5vh;
-    /* Responsive position from bottom */
+    bottom: 3vh;
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
@@ -6615,22 +6724,27 @@ body::after {
 
 /* Mobile adjustments */
 @media (max-width: 768px) {
+    .gallery-track {
+        height: 250vh;
+        /* Less scroll distance on mobile — feels faster */
+    }
+
     .gallery-active-description {
-        bottom: 2vh;
-        /* Slightly lower on mobile */
+        bottom: 10vh;
+        /* Closer to the cards */
         width: 95%;
     }
 
     .gallery-active-description h3 {
-        font-size: 1.25rem;
+        font-size: 1.1rem;
     }
 
     .gallery-active-description p {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
     }
 
     .gallery-active-description .active-desc-content {
-        padding: 1rem;
+        padding: 0.75rem 1rem;
     }
 }
 
@@ -6966,9 +7080,95 @@ body::after {
         opacity: 1;
     }
 
-    100% {
-        stroke-dashoffset: 0;
-        fill: rgba(54, 188, 247, 0.2);
-        opacity: 0;
+}
+
+/* ===== CONTACT SECTION: Social Icon Card Overrides ===== */
+/* Match the dark rounded-square icon look from the screenshot:
+   full-colour logos, dark bg, NO blue hover tint, no text labels */
+
+/* Force 5 equal columns for the 5 social icons */
+.contact .contact-grid.mini {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.75rem;
+    max-width: 400px;
+    margin-top: 1.25rem;
+}
+
+/* Bigger, icon-only cards */
+.contact .contact-grid.mini .skill-item.contact-item {
+    padding: 1rem;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    aspect-ratio: 1 / 1;
+}
+
+/* Make the icon fill more of the card */
+.contact .contact-grid.mini .skill-item.contact-item img {
+    width: 72%;
+    height: 72%;
+}
+
+/* Hide text labels — icon only */
+.contact .contact-grid.mini .skill-item.contact-item>span:not(.tooltip) {
+    display: none;
+}
+
+/* Override hover: subtle lift only, NO blue tint */
+.contact .contact-grid.mini .skill-item.contact-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    transform: translateY(-4px) scale(1.06);
+}
+
+.contact .contact-grid.mini .skill-item.contact-item:hover img {
+    transform: scale(1.08);
+    filter: grayscale(0%);
+}
+
+@media (max-width: 480px) {
+    .contact .contact-grid.mini {
+        max-width: 100%;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.5rem;
     }
+}
+
+/* Left-align icons within the connect-left panel */
+.contact .contact-grid.mini {
+    justify-content: flex-start;
+    margin-left: 0;
+    margin-right: auto;
+}
+
+/* Even spacing between all form fields */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.contact-form .form-row {
+    margin-bottom: 0;
+    gap: 1rem;
+}
+
+.contact-form .form-group {
+    margin-bottom: 0;
+}
+
+/* Even spacing for left-side content — matches form side */
+.connect-left {
+    gap: 1rem;
+}
+
+.connect-left .connect-title,
+.connect-left .connect-subtitle,
+.connect-left .connect-description {
+    margin-bottom: 0;
+}
+
+.connect-left .cli-row {
+    margin-top: 0;
 }
